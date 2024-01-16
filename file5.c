@@ -5,6 +5,7 @@ long Number;
 
 int main() {
 int mask = 1 << 11; // Start with the most significant bit (12th bit)
+int i;
 unsigned short int userInput;
     // Get input from the user
     printf("Enter a 12-bit number (0 to 4095): ");
@@ -21,12 +22,12 @@ unsigned short int userInput;
     // Display the entered number
 
 
-    for (int i = 0; i < 12; ++i) {
+    for (i = 0; i < 12; ++i) {
         int bit = (userInput & mask) ? 1 : 0;
         printf("%d", bit);
 	Number=Number*10+bit;
 
-        mask >>= 1; // Shift the mask to the right
+        mask >>= 1; /* Shift the mask to the right*/ 
     }
 
     printf("\n");
@@ -35,11 +36,11 @@ unsigned short int userInput;
 convertToBase4(Number);
 
 //mask = 1 << 11;
-    for (int i = 4; i >= 0; i--) {
+    for (i = 4; i >= 0; i--) {
         	
         printf("%c", base4Number[i]);
 
-        //mask >>= 1; // Shift the mask to the right
+        //mask >>= 1; 
     }
 printf("\n");
 
