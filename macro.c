@@ -1,5 +1,4 @@
-// macro.c
-#include "macro.h"
+#include "../macro.h"
 
 char *save_mcro_content(FILE *fp, fpos_t *pos, int *line_count) {
     int mcro_length;
