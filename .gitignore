@@ -1,0 +1,25 @@
+# .gitignore
+
+# Ignore object files
+*.o
+
+# Ignore compiled files
+*.out
+*.exe
+
+# Ignore build directories
+/build/
+
+# Ignore the .vscode directory if you're using Visual Studio Code
+.vscode/
+
+# Ignore any log files
+*.log
+
+# Ignore any temporary files created by the system
+*~
+*.swp
+*.swo
+
+# Ignore the Makefile if it's generated
+Makefile
