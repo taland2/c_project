@@ -6,8 +6,8 @@
 #include "utils.h"
 #include "error.h"
 
-macro_node* macro_head = NULL; /* Head of the macros linked list */
-macro_node* macro_tail = NULL; /* Tail of the macros linked list */
+node* macro_head = NULL; /* Head of the macros linked list */
+node* macro_tail = NULL; /* Tail of the macros linked list */
 
 #define HANDLE_REPORT if(report == ERR_MEM_ALLOC || report == TERMINATE) return TERMINATE; \
 else if (report != NO_ERROR) found_error = 1;
@@ -316,7 +316,7 @@ status_error_code handle_macro_end(char *line, int *found_macro,
 status_error_code write_to_file(file_context *src, file_context *dest, char *line, int found_macro, int found_error) {
     int line_offset;
     char *ptr = NULL, *word = NULL;
-    macro_node *matched_macro = NULL;
+    node *matched_macro = NULL;
     size_t word_len;
 
     if (found_error)
@@ -388,7 +388,7 @@ status_error_code write_to_file(file_context *src, file_context *dest, char *lin
  */
 status_error_code add_macro(char* name, char* body) {
     status_error_code s_name, s_body;
-    macro_node* new_macro = malloc(sizeof(macro_node));
+    node* new_macro = malloc(sizeof(node));
 
     if (!new_macro) {
         handle_error(ERR_MEM_ALLOC);
@@ -427,8 +427,8 @@ status_error_code add_macro(char* name, char* body) {
  *
  * @return A pointer to the matching macro if found, or NULL otherwise.
  */
-macro_node* is_macro_exists(char* name) {
-    macro_node* current = macro_head;
+node* is_macro_exists(char* name) {
+    node* current = macro_head;
 
     while (current && !IS_EMPTY()) {
         if (strcmp(current->name, name) == 0)
@@ -445,8 +445,8 @@ macro_node* is_macro_exists(char* name) {
  * After freeing the memory, the macro list is empty.
  */
 void free_macros() {
-    macro_node* current = macro_head;
-    macro_node* next;
+    node* current = macro_head;
+    node* next;
 
     while (current && !IS_EMPTY()) {
         next = current->next;
