@@ -2,8 +2,8 @@
 #define ASSEMBLER_PREPROCESSOR_H
 
 #include <stdio.h>
-#include "utils.h"
-#include "errors.h"
+#include "Utils.h"
+#include "Error_Handler.h"
 
 #define MAX_MACRO_NAME_LENGTH 32 /* 31 + '\0' */
 #define MACRO_START "mcro"

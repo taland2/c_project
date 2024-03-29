@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "PreProcessor.h"
-#include "utils.h"
-#include "error.h"
+#include "Utils.h"
+#include "Error_Handler.h"
 
 node* macro_head = NULL; /* Head of the macros linked list */
 node* macro_tail = NULL; /* Tail of the macros linked list */

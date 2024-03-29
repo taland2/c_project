@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include "data.h"
 // #include "passes.h"
-#include "error.h"
+#include "Error_Handler.h"
 #include "Utils.h"
 
 #define get_register_num(reg) ((char) (reg)[2] - '0')

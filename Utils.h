@@ -1,7 +1,7 @@
 #ifndef ASSEMBLER_UTILS_H
 #define ASSEMBLER_UTILS_H
 
-#include "error.h"
+#include "Error_Handler.h"
 
 #define FILE_EXT_LEN 3 /* .as */
 #define FILE_EXT_LEN_OUT 4 /* .obj */

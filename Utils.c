@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "error.h"
-#include "utils.h"
+#include "Error_Handler.h"
+#include "Utils.h"
 /* #include "passes.h" */
 
 const char *directives[DIRECTIVE_LEN] = {

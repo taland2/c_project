@@ -1,13 +1,16 @@
-PreProcessor.o: PreProcessor.c PreProcessor.h utils.h error.h
+assembler.o: assembler.c utils.h Error_Handler.h
+	gcc -ansi -pedantic -Wall -c assembler.c
+
+PreProcessor.o: PreProcessor.c PreProcessor.h utils.h Error_Handler.h
 	gcc -ansi -pedantic -Wall -c PreProcessor.c
 
-utils.o: utils.c utils.h erros.h
-	gcc -ansi -pedantic -Wall -c utils.c
+Utils.o: Utils.c utils.h Error_Handler.h
+	gcc -ansi -pedantic -Wall -c Utils.c
 
-errors.o: errors.c error.h utils.h
-	gcc -ansi -pedantic -Wall -c error.c
+Error_Handler.o: Error_Handler.c Error_Handler.h Utils.h
+	gcc -ansi -pedantic -Wall -c Error_Handler.c
 
-data.o: data.c data.h utils.h error.h
+data.o: data.c data.h Utils.h Error_Handler.h
 	gcc -ansi -pedantic -Wall -c data.c
 .PHONY: clean
 
