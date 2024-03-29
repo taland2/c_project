@@ -1,0 +1,15 @@
+PreProcessor.o: PreProcessor.c PreProcessor.h utils.h error.h
+	gcc -ansi -pedantic -Wall -c PreProcessor.c
+
+utils.o: utils.c utils.h erros.h
+	gcc -ansi -pedantic -Wall -c utils.c
+
+errors.o: errors.c error.h utils.h
+	gcc -ansi -pedantic -Wall -c error.c
+
+data.o: data.c data.h utils.h error.h
+	gcc -ansi -pedantic -Wall -c data.c
+.PHONY: clean
+
+clean:
+	rm -f *.o

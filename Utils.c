@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "errors.h"
+#include "error.h"
 #include "utils.h"
-#include "passes.h"
+/* #include "passes.h" */
 
 const char *directives[DIRECTIVE_LEN] = {
     "data",
@@ -29,7 +29,7 @@ const char *commands[COMMANDS_LEN] = {
     "prn",
     "jsr",
     "rts",
-    "stop"
+    "hlt"
 };
 
 /**
@@ -40,10 +40,10 @@ const char *commands[COMMANDS_LEN] = {
  * @param ext The extension to append to the file name.
  * @param ext_len The length of the extension.
  * @param mode The file mode for opening the file (e.g., "r" for read, "w" for write).
- * @param report Pointer to the status report variable.
+ * @param report Pointer to the status_error_code report variable.
  * @return A pointer to the created file context object if successful, NULL otherwise.
  */
-file_context* create_file_context(const char* file_name, char* ext, size_t ext_len, char* mode, status *report) {
+file_context* create_file_context(const char* file_name, char* ext, size_t ext_len, char* mode, status_error_code *report) {
     file_context* fc;
     FILE* file = NULL;
     char *file_name_w_ext = NULL;
@@ -212,10 +212,10 @@ int safe_atoi(const char *str) {
  *
  * @param src Pointer to file context for error handling.
  * @param str The string to validate as a register.
- * @param report Pointer to status report for error indication.
+ * @param report Pointer to status_error_code report for error indication.
  * @return The register number if valid, or 0 if invalid.
  */
-int is_valid_register(file_context *src, const char* str, status *report) {
+int is_valid_register(file_context *src, const char* str, status_error_code *report) {
     int missing_at_key = 0;
     if (*str != '@')
         missing_at_key = 1;
@@ -236,10 +236,10 @@ int is_valid_register(file_context *src, const char* str, status *report) {
  *
  * @param line The current line being processed. It will be updated to skip leading whitespace and the extracted word.
  * @param word Pointer to store the extracted word. Memory for the word should be allocated by the caller.
- * @param report Pointer to the status report to indicate any errors.
+ * @param report Pointer to the status_error_code report to indicate any errors.
  * @return The length of the extracted word if a valid string was found and extracted, 0 otherwise.
  */
-size_t is_valid_string(char **line, char **word, status *report) {
+size_t is_valid_string(char **line, char **word, status_error_code *report) {
     size_t length;
 
     if (**line == '\0' || **line == '\n')
@@ -262,7 +262,7 @@ size_t is_valid_string(char **line, char **word, status *report) {
  * Checks if a string is a valid label.
  *
  * @param label The string to check.
- * @return NO_ERROR if the string is a valid label, an appropriate error status otherwise.
+ * @return NO_ERROR if the string is a valid label, an appropriate error status_error_code otherwise.
  *
  * @remarks The function checks if the label meets the following criteria:
  *   - The label is not NULL and has a length between 1 and MAX_LABEL_LENGTH characters.
@@ -271,12 +271,12 @@ size_t is_valid_string(char **line, char **word, status *report) {
  *   - The label consists only of alphanumeric characters.
  *   - The label ends with a colon (':') to indicate a label declaration.
  */
-status is_valid_label(const char *label) {
+status_error_code is_valid_label(const char *label) {
     size_t length = strlen(label);
     int i;
 
     if (!label || length == 0  || length > MAX_LABEL_LENGTH ||
-        is_command(label) != INV_CMD || is_directive(label + 1) ||
+        is_command(label) != INVALID_COMMAND || is_directive(label + 1) ||
         is_directive(label))
         return ERR_INVALID_LABEL;
 
@@ -305,12 +305,12 @@ status is_valid_label(const char *label) {
  * @param src Pointer to the file context.
  * @param word The string to validate as a data value.
  * @param length The length of the word.
- * @param report Pointer to the status report.
+ * @param report Pointer to the status_error_code report.
  * @return The type of the data value (LBL, NUM, STR, or INV) if valid, or INV if invalid.
  */
-Value validate_data(file_context *src, char *word, size_t length, status *report) {
+Value validate_data(file_context *src, char *word, size_t length, status_error_code *report) {
     char *p_word = NULL;
-    status temp_report;
+    status_error_code temp_report;
 
     if (*word == '+' || *word == '-')
         word++;
@@ -347,14 +347,14 @@ Value validate_data(file_context *src, char *word, size_t length, status *report
  * Extracts the next word from the line, accounting for spaces within a string.
  *
  * Extracts the next word from the line, considering spaces within a string.
- * It allocates memory for the word and returns it. Updates the word length and report status accordingly.
+ * It allocates memory for the word and returns it. Updates the word length and report status_error_code accordingly.
  *
  * @param line The current line being processed. Will be updated to skip leading whitespace and the extracted word.
  * @param word_len Pointer to store the length of the extracted word.
- * @param report Pointer to the status report to indicate any errors.
+ * @param report Pointer to the status_error_code report to indicate any errors.
  * @return The extracted word as a dynamically allocated string, or NULL if an error occurred.
  */
-char* has_spaces_string(char **line, size_t *word_len, status *report) {
+char* has_spaces_string(char **line, size_t *word_len, status_error_code *report) {
     char *next_word = NULL;
     next_word = malloc(sizeof(char) * get_word_length(line) + 1);
 
@@ -379,16 +379,16 @@ char* has_spaces_string(char **line, size_t *word_len, status *report) {
  * @param line - A pointer to the input line string.
  * @param word - A pointer to the string being concatenated and validated.
  * @param length - A pointer to the length of the string.
- * @param report - A pointer to the status report variable.
+ * @param report - A pointer to the status_error_code report variable.
  * @return The value indicating the type of the concatenated and validated string (STR or INV).
  */
-Value concat_and_validate_string(file_context *src, char **line, char **word, size_t *length, int *DC, status *report) {
+Value concat_and_validate_string(file_context *src, char **line, char **word, size_t *length, int *DC, status_error_code *report) {
     data_image *p_data = NULL;
     char *next_word = NULL;
     char white_spaces_str[MAX_LABEL_LENGTH];
     char *p_word = *word;
     size_t word_len = 0, white_spaces_amt = 0;
-    status temp_report = NO_ERROR;
+    status_error_code temp_report = NO_ERROR;
     int is_first_value = 1, *value = NULL;;
 
     while (p_word[*length - 1] != '\"') {
@@ -429,12 +429,12 @@ Value concat_and_validate_string(file_context *src, char **line, char **word, si
  * @param line Pointer to address of the line.
  * @param word Pointer to address of string to validate as a string value.
  * @param length Pointer to the length of the word.
- * @param report Pointer to the status report.
+ * @param report Pointer to the status_error_code report.
  * @return The type of the string value (LBL, STR, or INV) if valid, or INV if invalid.
  */
-Value validate_string(file_context *src, char **line ,char **p_word, size_t length, int *DC, status *report) {
+Value validate_string(file_context *src, char **line ,char **p_word, size_t length, int *DC, status_error_code *report) {
     char *word = NULL;
-    status temp_report;
+    status_error_code temp_report;
     size_t word_len = length;
     word = *p_word;
 
@@ -461,9 +461,9 @@ Value validate_string(file_context *src, char **line ,char **p_word, size_t leng
  *
  * @param target  Pointer to the target string.
  * @param source  Pointer to the source string.
- * @return        Status: NO_ERROR if successful, otherwise the error status.
+ * @return        Status: NO_ERROR if successful, otherwise the error status_error_code.
  */
-status copy_string(char** target, const char* source) {
+status_error_code copy_string(char** target, const char* source) {
     char* temp = NULL;
     if (!source) {
         handle_error(TERMINATE, "copy_string()");
@@ -495,9 +495,9 @@ status copy_string(char** target, const char* source) {
  * @param source  Source string.
  * @param count number of characters to copy
  *
- * @return status, NO_ERROR in case of no error otherwise else the error status.
+ * @return status_error_code, NO_ERROR in case of no error otherwise else the error status_error_code.
  */
-status copy_n_string(char** target, const char* source, size_t count) {
+status_error_code copy_n_string(char** target, const char* source, size_t count) {
     char* temp = NULL;
     if (!source) {
         handle_error(TERMINATE, "copy_n_string()");
@@ -547,7 +547,7 @@ Command is_command(const char* src) {
         for (i = 0; i < COMMANDS_LEN; i++)
             if (strcmp(src, commands[i]) == 0)
                 return i; /* Corresponding Command*/
-    return INV_CMD;
+    return INVALID_COMMAND;
 }
 
 /**

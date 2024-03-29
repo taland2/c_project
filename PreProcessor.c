@@ -165,7 +165,7 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
                 report = FAILURE;
             }
 
-            if ((inval = is_command(word)) && inval != INV_CMD) {
+            if ((inval = is_command(word)) && inval != INVALID_COMMAND) {
                 handle_error(ERR_INVAL_MACRO_NAME, src, commands[inval]);
                 report = FAILURE;
             }

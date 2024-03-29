@@ -20,6 +20,3 @@
 *~
 *.swp
 *.swo
-
-# Ignore the Makefile if it's generated
-Makefile

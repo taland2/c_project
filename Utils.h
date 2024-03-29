@@ -1,7 +1,7 @@
 #ifndef ASSEMBLER_UTILS_H
 #define ASSEMBLER_UTILS_H
 
-#include "errors.h"
+#include "error.h"
 
 #define FILE_EXT_LEN 3 /* .as */
 #define FILE_EXT_LEN_OUT 4 /* .obj */
@@ -66,8 +66,8 @@ typedef enum {
     PRN,
     JSR,
     RTS,
-    STOP,
-    INV_CMD
+    HLT,
+    INVALID_COMMAND
 } Command;
 
 typedef enum {
@@ -88,27 +88,27 @@ typedef struct {
 
 
 char *strdup(const char *s);
-char* has_spaces_string(char **line, size_t *word_len, status *report);
+char* has_spaces_string(char **line, size_t *word_len, status_error_code *report);
 
 int safe_atoi(const char *str);
-int is_valid_register(file_context *src, const char* str, status *report);
+int is_valid_register(file_context *src, const char* str, status_error_code *report);
 
 void free_file_context(file_context** context);
 
 size_t get_word_length(char **ptr);
 size_t get_word(char **ptr, char *word, Delimiter delimiter);
-size_t is_valid_string(char **line, char **word, status *report);
+size_t is_valid_string(char **line, char **word, status_error_code *report);
 
-status is_valid_label(const char *label);
-status copy_string(char** target, const char* source);
-status copy_n_string(char** target, const char* source, size_t count);
+status_error_code is_valid_label(const char *label);
+status_error_code copy_string(char** target, const char* source);
+status_error_code copy_n_string(char** target, const char* source, size_t count);
 
-Value validate_string(file_context *src, char **line ,char **p_word, size_t length, int *DC, status *report);
-Value validate_data(file_context *src, char *word, size_t length, status *report);
-Value concat_and_validate_string(file_context *src, char **line, char **word, size_t *length, int *DC, status *report);
+Value validate_string(file_context *src, char **line ,char **p_word, size_t length, int *DC, status_error_code *report);
+Value validate_data(file_context *src, char *word, size_t length, status_error_code *report);
+Value concat_and_validate_string(file_context *src, char **line, char **word, size_t *length, int *DC, status_error_code *report);
 
 Command is_command(const char* src);
 Directive is_directive(const char* src);
 
-file_context* create_file_context(const char* file_name, char* ext, size_t ext_len, char* mode, status *report);
+file_context* create_file_context(const char* file_name, char* ext, size_t ext_len, char* mode, status_error_code *report);
 #endif
