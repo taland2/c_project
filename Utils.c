@@ -44,57 +44,75 @@ const char *commands[COMMANDS_LEN] = {
  * @return A pointer to the created file context object if successful, NULL otherwise.
  */
 file_context* create_file_context(const char* file_name, char* ext, size_t ext_len, char* mode, status_error_code *report) {
-    file_context* fc;
+     file_context* fc = NULL;
     FILE* file = NULL;
     char *file_name_w_ext = NULL;
     size_t len;
-
-    fc = malloc(sizeof(file_context));
-    if (!fc) {
+    printf("enters create file");
+    /* Allocate memory for the file_context structure */
+    fc = (file_context*)malloc(sizeof(file_context));
+    if (fc == NULL) {
         *report = ERR_MEM_ALLOC;
-        return fc;
+        return NULL; /* Directly return NULL to indicate failure */
     }
 
+    /* Calculate length needed for the file name with extension, including space for null terminator */
     len = strlen(file_name) + ext_len + 1;
-    file_name_w_ext = malloc(len * sizeof(char));
-
-    if (!file_name_w_ext) {
+    file_name_w_ext = (char*)malloc(len * sizeof(char));
+    if (file_name_w_ext == NULL) {
         *report = ERR_MEM_ALLOC;
-        free_file_context(&fc);
-        return NULL;
+        free(fc); /* Free the allocated file_context structure */
+        return NULL; /* Early return if memory allocation fails */
     }
 
-
+    /* Construct the full file name with its extension */
     strcpy(file_name_w_ext, file_name);
     strcat(file_name_w_ext, ext);
-    fc->file_name_wout_ext = strdup( file_name);
 
-    if (!(fc->file_name_wout_ext)) {
+    /* Manually duplicate the file_name to file_name_wout_ext for keeping a version without extension */
+    fc->file_name_wout_ext = (char*)malloc(strlen(file_name) + 1);
+    printf("File name to open: %s\n", fc->file_name ? fc->file_name : "NULL");
+    if (fc->file_name_wout_ext == NULL) {
+        printf("File name to open:2 %s\n", fc->file_name ? fc->file_name : "NULL");
         *report = ERR_MEM_ALLOC;
-        free_file_context(&fc);
-        return NULL;
+        free(file_name_w_ext); /* Free the constructed file name string */
+        free(fc); /* Free the allocated file_context structure */
+        return NULL; /* Early return if memory allocation fails */
     }
+    strcpy(fc->file_name_wout_ext, file_name);
 
-    fc->file_name = NULL;
-    fc->file_ptr = NULL;
-    fc->tc = 0;
-    fc->tc = 0;
+    /* Duplicate the constructed file name with extension to fc->file_name */
+    fc->file_name = (char*)malloc(strlen(file_name_w_ext) + 1);
+    if (fc->file_name == NULL) {
+        *report = ERR_MEM_ALLOC;
+        free(fc->file_name_wout_ext); /* Free the version without extension */
+        free(file_name_w_ext); /* Free the constructed file name string */
+        free(fc); /* Free the allocated file_context structure */
+        return NULL; /* Early return if memory allocation fails */
+    }
+    strcpy(fc->file_name, file_name_w_ext);
 
-    copy_n_string(&fc->file_name, file_name_w_ext, len);
-    free(file_name_w_ext);
+    /* Attempt to open the file with the constructed file name */
     file = fopen(fc->file_name, mode);
-
-    if (!file) {
+    if (file == NULL) {
         handle_error(ERR_OPEN_FILE, fc);
         *report = ERR_OPEN_FILE;
-        free_file_context(&fc);
-        return NULL;
+        free(fc->file_name); /* Free the file name string */
+        free(fc->file_name_wout_ext); /* Free the version without extension */
+        free(fc); /* Free the file_context structure */
+        free(file_name_w_ext); /* Free the constructed file name string */
+        return NULL; /* Early return if file opening fails */
     }
 
+    /* Set the remaining fields of the file_context structure */
     fc->file_ptr = file;
-    fc->lc = 1; /* line starts from 1 */
+    fc->lc = 1; /* Initialize line count */
     *report = NO_ERROR;
-    return fc;
+
+    /* Cleanup the temporary file name string */
+    free(file_name_w_ext);
+
+    return fc; /* Return the constructed file_context structure */
 }
 
 /**
@@ -383,6 +401,7 @@ char* has_spaces_string(char **line, size_t *word_len, status_error_code *report
  * @return The value indicating the type of the concatenated and validated string (STR or INV).
  */
 Value concat_and_validate_string(file_context *src, char **line, char **word, size_t *length, int *DC, status_error_code *report) {
+    /*
     data_image *p_data = NULL;
     char *next_word = NULL;
     char white_spaces_str[MAX_LABEL_LENGTH];
@@ -421,6 +440,8 @@ Value concat_and_validate_string(file_context *src, char **line, char **word, si
     }
     *word = p_word;
     return STR;
+    */
+   return INV;
 }
 
 /**

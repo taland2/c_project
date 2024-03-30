@@ -65,17 +65,18 @@ int main(int argc, char *argv[]) {
     int i;
     status_error_code report;
     file_context *dest_am = NULL;
-
+    printf("start\n");
     if (argc == 1) {
+        printf("not enough arg\n");
         handle_error(FAILURE);
         exit(FAILURE);
     }
 
     for (i = 1; i < argc; i++) {
+        printf(" enough arg\n");
         report = preprocess_file(argv[i], &dest_am, i, argc - 1);
         CHECK_ERROR_CONTINUE(report, argv[i]);
-    return 0;
     }
-    return 1;
+    return 0;
 }
 

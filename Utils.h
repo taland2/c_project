@@ -43,11 +43,12 @@ typedef enum {
     DEFAULT /* for .obj */
 } Directive;
 
-typedef enum {
-    INVALID_MD = 0,
-    IMMEDIATE = 1,
-    DIRECT = 3,
-    REGISTER = 5
+typedef enum { 
+    IMMEDIATE = 0,
+    DIRECT = 1,
+    INDEX =2,
+    REGISTER = 3,
+    INVALID_MD = 4
 } Adrs_mod;
 
 typedef enum {

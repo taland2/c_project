@@ -373,8 +373,10 @@ status_error_code write_to_file(file_context *src, file_context *dest, char *lin
         /* Move the pointer to the next word */
         ptr += word_len;
     }
-    if (!found_macro)
+    if (!found_macro){
+        printf("%s\n", line);
         fprintf(dest->file_ptr, "\n");
+    }
     return NO_ERROR;
 }
 
