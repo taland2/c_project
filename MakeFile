@@ -18,4 +18,4 @@ data.o: data.c data.h Utils.h Error_Handler.h
 .PHONY: clean
 
 clean:
-	rm -f *.o
+	rm -f *.o *.am *.ent

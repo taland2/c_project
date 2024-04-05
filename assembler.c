@@ -26,12 +26,12 @@
  * @param file_name     The name of the input source file to process.
  * @param dest          Pointer to the destination file_context struct.
  * @param index         The index of the file being processed.
- * @param max           The total number of files to be processed.
+ * @param file_number           The total number of files to be processed.
  *
  * @return The status of the file processing.
  * @return NO_ERROR if successful, or FAILURE if an error occurred.
  */
-status_error_code preprocess_file(const char* file_name, file_context** dest , int index, int max) {
+status_error_code preprocess_file(const char* file_name, file_context** dest , int index, int file_number) {
     file_context *src = NULL;
     status_error_code code = NO_ERROR;
 
@@ -42,7 +42,7 @@ status_error_code preprocess_file(const char* file_name, file_context** dest , i
 
     *dest = create_file_context(file_name, PREPROCESSOR_EXT, FILE_EXT_LEN, FILE_MODE_WRITE_PLUS, &code);
     HANDLE_STATUS(*dest, code);
-    (*dest)->tc = max;
+    (*dest)->tc = file_number;
     (*dest)->fc = index;
 
     code = assembler_preprocessor(src, *dest);
@@ -50,30 +50,27 @@ status_error_code preprocess_file(const char* file_name, file_context** dest , i
     if (src) free_file_context(&src);
 
     if (code != NO_ERROR) {
-        handle_error(ERR_PRE, index, max, file_name);
+        handle_error(ERR_PRE, index, file_number, file_name);
         free_file_context(dest);
         return FAILURE;
     } else {
-        handle_progress(PRE_FILE_OK, *dest, index, max);
+        handle_progress(PRE_FILE_OK, *dest, index, file_number);
         return NO_ERROR;
     }
 }
-status_error_code preprocess_file(const char* file_name, file_context** dest , int index, int max);
+status_error_code preprocess_file(const char* file_name, file_context** dest , int index, int file_number);
 
 
 int main(int argc, char *argv[]) {
     int i;
     status_error_code report;
     file_context *dest_am = NULL;
-    printf("start\n");
     if (argc == 1) {
-        printf("not enough arg\n");
         handle_error(FAILURE);
         exit(FAILURE);
     }
 
     for (i = 1; i < argc; i++) {
-        printf(" enough arg\n");
         report = preprocess_file(argv[i], &dest_am, i, argc - 1);
         CHECK_ERROR_CONTINUE(report, argv[i]);
     }
