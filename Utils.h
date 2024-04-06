@@ -19,6 +19,24 @@
 #define ENTRY_EXT  ".ent"
 #define EXTERNAL_EXT ".ext"
 
+#define ASSEMBLER_PASSES_H
+
+#define INVALID_ADDRESS (-1)
+#define BASE64_CHARS 2
+#define A_R_E_BINARY_LEN 2
+#define SRC_DEST_OP_BINARY_LEN 3
+#define OPCODE_BINARY_LEN 4
+#define BINARY_BASE64_BITS 6
+#define REGISTER_BINARY_LEN 5
+#define ADDRESS_BINARY_LEN 10
+#define DEFAULT_DATA_IMAGE_CAP 5
+#define BINARY_BITS 12
+#define AMT_WORD_4 4
+#define AMT_WORD_2 2
+#define AMT_WORD_1 1
+#define ADDRESS_START 100
+#define MAX_MEMORY_SIZE 1024
+
 extern const char *directives[DIRECTIVE_LEN];
 extern const char *commands[COMMANDS_LEN];
 
@@ -87,7 +105,47 @@ typedef struct {
     int fc; /* file counter (x out of tc) */
 } file_context;
 
+typedef enum {
+    DEFAULT_12BIT,
+    REG_DEST,
+    REG_SRC,
+    REG_REG,
+    ADDRESS,
+    VALUE,
+    ILLEGAL_CONCAT = -1
+} Concat_mode;
 
+typedef struct symbol symbol;
+
+typedef struct {
+    char* binary_src;
+    char* binary_opcode;
+    char* binary_dest;
+    char* binary_a_r_e;
+    char* base64_word;
+
+    Directive directive;
+    Concat_mode concat;
+    symbol *p_sym;
+
+    int *value;
+    int is_word_complete;
+    int lc;
+    int data_address;
+
+} data_image;
+
+struct symbol {
+    char *label;
+    char *address_binary;
+
+    int address_decimal;
+    int is_missing_info;
+    int lc;
+
+    Directive sym_dir;
+    data_image *data;
+};
 char *strdup(const char *s);
 char* has_spaces_string(char **line, size_t *word_len, status_error_code *report);
 

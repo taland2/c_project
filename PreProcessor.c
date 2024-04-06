@@ -51,10 +51,6 @@ status_error_code assembler_preprocessor(file_context *src, file_context *dest) 
             continue;
         }
 
-        if (isdigit(*line)) {
-            found_error = 1;
-            handle_error(ERR_LINE_START_DIGIT, src);
-        }
 
         line_len = strlen(line);
         if (line_len > MAX_LINE_LENGTH) {

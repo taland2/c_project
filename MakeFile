@@ -1,5 +1,5 @@
-Assembler: assembler.o PreProcessor.o Utils.o Error_Handler.o  data.o
-	gcc -ansi -Wall assembler.o PreProcessor.o Utils.o Error_Handler.o data.o -o Assembler
+Assembler: assembler.o PreProcessor.o Utils.o Error_Handler.o  
+	gcc -ansi -Wall assembler.o PreProcessor.o Utils.o Error_Handler.o  -o Assembler
 
 assembler.o: assembler.c utils.h Error_Handler.h
 	gcc -ansi -pedantic -Wall -c assembler.c
@@ -13,9 +13,7 @@ Utils.o: Utils.c utils.h Error_Handler.h
 Error_Handler.o: Error_Handler.c Error_Handler.h Utils.h
 	gcc -ansi -pedantic -Wall -c Error_Handler.c
 
-data.o: data.c data.h Utils.h Error_Handler.h
-	gcc -ansi -pedantic -Wall -c data.c
 .PHONY: clean
 
 clean:
-	rm -f *.o *.am *.ent
+	rm -f *.o *.am *.ent *.exe
