@@ -105,67 +105,12 @@ typedef struct {
     int fc; /* file counter (x out of tc) */
 } file_context;
 
-typedef enum {
-    DEFAULT_12BIT,
-    REG_DEST,
-    REG_SRC,
-    REG_REG,
-    ADDRESS,
-    VALUE,
-    ILLEGAL_CONCAT = -1
-} Concat_mode;
-
-typedef struct symbol symbol;
-
-typedef struct {
-    char* binary_src;
-    char* binary_opcode;
-    char* binary_dest;
-    char* binary_a_r_e;
-    char* base64_word;
-
-    Directive directive;
-    Concat_mode concat;
-    symbol *p_sym;
-
-    int *value;
-    int is_word_complete;
-    int lc;
-    int data_address;
-
-} data_image;
-
-struct symbol {
-    char *label;
-    char *address_binary;
-
-    int address_decimal;
-    int is_missing_info;
-    int lc;
-
-    Directive sym_dir;
-    data_image *data;
-};
-char *strdup(const char *s);
-char* has_spaces_string(char **line, size_t *word_len, status_error_code *report);
-
-int safe_atoi(const char *str);
-int is_valid_register(file_context *src, const char* str, status_error_code *report);
 
 void free_file_context(file_context** context);
 
 size_t get_word_length(char **ptr);
-size_t get_word(char **ptr, char *word, Delimiter delimiter);
-size_t is_valid_string(char **line, char **word, status_error_code *report);
-
-status_error_code is_valid_label(const char *label);
 status_error_code copy_string(char** target, const char* source);
 status_error_code copy_n_string(char** target, const char* source, size_t count);
-
-Value validate_string(file_context *src, char **line ,char **p_word, size_t length, int *DC, status_error_code *report);
-Value validate_data(file_context *src, char *word, size_t length, status_error_code *report);
-Value concat_and_validate_string(file_context *src, char **line, char **word, size_t *length, int *DC, status_error_code *report);
-
 Command is_command(const char* src);
 Directive is_directive(const char* src);
 
