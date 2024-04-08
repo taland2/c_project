@@ -5,7 +5,7 @@ char *next_token_string(char *dest, char *line);
 char *next_list_token(char *dest, char *line);
 char *next_token(char *seq);
 char *skip_spaces(char *ch);
-void copy_token(char *dest, char *line);
+void extract_token(char *dest, char *line);
 int end_of_line(char *line);
 int ignore(char *line);
 

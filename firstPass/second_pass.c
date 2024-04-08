@@ -43,10 +43,10 @@ void read_line_second_pass(char *line)
     line = skip_spaces(line); /* Proceeding to first non-blank character */
     if(end_of_line(line)) return; /* a blank line is not an error */
 
-    copy_token(current_token, line);
+    extract_token(current_token, line);
     if(is_label(current_token, COLON)) { /* If it's a label, skip it */
         line = next_token(line);
-        copy_token(current_token, line);
+        extract_token(current_token, line);
     }
 
     if((dir_type = find_directive(current_token)) != NOT_FOUND) /* We need to handle only .entry directive */
@@ -54,7 +54,7 @@ void read_line_second_pass(char *line)
         line = next_token(line);
         if(dir_type == ENTRY)
         {
-            copy_token(current_token, line);
+            extract_token(current_token, line);
             make_entry(symbols_table, current_token); /* Creating an entry for the symbol */
         }
     }

@@ -378,7 +378,7 @@ char *next_token(char *seq)
 }
 
 /* This function copies the next token (until a space or end of line) to a destination string */
-void copy_token(char *dest, char *line)
+void extract_token(char *dest, char *line)
 {
     int i = 0;
     if(dest == NULL || line == NULL) return;

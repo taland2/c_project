@@ -54,7 +54,7 @@ void read_line(char *line)
         return;
     }
 
-    copy_token(current_token, line); /* Assuming that label is separated from other tokens by a whitespace */
+    extract_token(current_token, line); /* Assuming that label is separated from other tokens by a whitespace */
     if(is_label(current_token, COLON)) { /* We check if the first token is a label (and it should contain a colon) */
         label = TRUE;
         label_node = add_label(&symbols_table, current_token, 0, FALSE, FALSE); /* adding label to the global symbols table */
@@ -69,7 +69,7 @@ void read_line(char *line)
             err = LABEL_ONLY; /* A line can't be label-only */
             return;
         }
-        copy_token(current_token, line); /* Proceed to next token */
+        extract_token(current_token, line); /* Proceed to next token */
     } /* If there's a label error then exit this function */
 
     if(is_error()) /* is_label might return an error */
@@ -79,7 +79,7 @@ void read_line(char *line)
     {
         if(label)
         {
-            if(dir_type == EXTERN || dir_type == ENTRY) { /* we need to ignore creation of label before .entry/.extern */
+            if(dir_type == EXTERN || dir_type == ENTRY) { /* ignore creation of label before .entry/.extern */
                 delete_label(&symbols_table, label_node->name);
                 label = FALSE;
             }
@@ -523,7 +523,7 @@ int handle_extern_directive(char *line)
 {
     char token[LABEL_LENGTH]; /* This will hold the required label */
 
-    copy_token(token, line); /* Getting the next token */
+    extract_token(token, line); /* Getting the next token */
     if(end_of_line(token)) /* If the token is empty, then there's no label */
     {
         err = EXTERN_NO_LABEL;
