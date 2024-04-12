@@ -100,43 +100,44 @@ status_error_code assembler_preprocessor(file_context *src, file_context *dest) 
  */
 status_error_code handle_macro_start(file_context *src, char *line, int *found_macro,
                            char **macro_name, char **macro_body) {
-    char *mcro = NULL, *endmcro = NULL, *word = NULL;
+    char *mcr = NULL, *endmcr = NULL, *word = NULL;
     size_t word_len;
     int line_offset = 0, inval;
     status_error_code report = NO_ERROR;
 
-    mcro = strstr(line, MACRO_START);
-    endmcro = strstr(line, MACRO_END);
+    mcr = strstr(line, MACRO_START);
+    endmcr = strstr(line, MACRO_END);
 
-    if (*found_macro) { /* previously found 'mcro' */
-        if ((mcro && !endmcro) || (endmcro && mcro < endmcro)) { /* 'mcro' detected */
+    if (*found_macro) { /* previously found 'mcr' */
+        if ((mcr && !endmcr) || (endmcr && mcr < endmcr)) { /* 'mcr' detected */
             handle_error(ERR_MISSING_ENDMACRO, src);
             if (**macro_body) free(*macro_body);
             *macro_body = NULL;
         }
-        else if (endmcro){
-            COUNT_SPACES(line_offset, endmcro);
-            endmcro += SKIP_MCR0_END + line_offset;
-            if (*endmcro != '\0') {
+        else if (endmcr){
+            COUNT_SPACES(line_offset, endmcr);
+            endmcr += SKIP_MCR0_END + line_offset;
+            if (*endmcr != '\0') {
+                printf("handle macro ERROR START \n");
                 handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after endmacro */
                 report = FAILURE;
             }
         }
     }
     else {
-        if ((mcro && !endmcro) || (endmcro && (mcro < endmcro))) { /* 'mcro' detected */
+        if ((mcr && !endmcr) || (endmcr && (mcr < endmcr))) { /* 'mcr' detected */
             *found_macro = 1;
-            mcro += SKIP_MCRO;
-            if (!isspace(*mcro)) {
+            mcr += SKIP_MCRO;
+            if (!isspace(*mcr)) {
                 *found_macro = 0;
                 return NO_ERROR;
             }
-            while (*mcro && (*mcro == ' ' || *mcro == '\t')) {
-                mcro++;
+            while (*mcr && (*mcr == ' ' || *mcr == '\t')) {
+                mcr++;
             }
-            word_len = get_word_length(&mcro);
+            word_len = get_word_length(&mcr);
 
-            if (copy_n_string(&word, mcro, word_len) != NO_ERROR) {
+            if (copy_n_string(&word, mcr, word_len) != NO_ERROR) {
                 free(word);
                 return ERR_MEM_ALLOC;
             }
@@ -169,11 +170,12 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
 
             if (word) free(word);
 
-            endmcro = mcro;
-            COUNT_SPACES(line_offset, endmcro);
-            endmcro += line_offset + get_word_length(&endmcro);
-            COUNT_SPACES(line_offset, endmcro);
-            if (endmcro[line_offset] != '\0') {
+            endmcr = mcr;
+            COUNT_SPACES(line_offset, endmcr);
+            endmcr += line_offset + get_word_length(&endmcr);
+            COUNT_SPACES(line_offset, endmcr);
+            if (endmcr[line_offset] != '\0') {
+                printf("handle macro ERROR START 2");
                 handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after macro */
                 report = FAILURE;
             }
@@ -183,11 +185,11 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
                 free(*macro_name);
                 *macro_name = NULL;
             }
-            if(copy_n_string(macro_name, mcro, word_len) != NO_ERROR) return FAILURE;
+            if(copy_n_string(macro_name, mcr, word_len) != NO_ERROR) return FAILURE;
         }
-        else if (endmcro && (isspace(*(endmcro + 1)) )) {
+        else if (endmcr && (isspace(*(endmcr + 1)) )) {
             handle_error(ERR_MISSING_MACRO, src);
-            return FAILURE; /* 'endmcro' detected, without a matching opening 'mcro.' */
+            return FAILURE; /* 'endmcr' detected, without a matching opening 'mcr.' */
         }
     }
     return report;
@@ -222,7 +224,7 @@ status_error_code handle_macro_body(char *line, int found_macro, char **macro_bo
         line_length = strlen(line);
         COUNT_SPACES(line_offset, line);
 
-        if (strncmp(line + line_offset, "endmcro", SKIP_MCR0_END) == 0)
+        if (strncmp(line + line_offset, "endmcr", SKIP_MCR0_END) == 0)
             return NO_ERROR;
 
         new_macro_body = realloc(*macro_body, body_len + line_length - line_offset + 2);
@@ -350,6 +352,7 @@ status_error_code write_to_file(file_context *src, file_context *dest, char *lin
             COUNT_SPACES(line_offset, ptr);
             free(word);
             if (ptr[line_offset] != '\0') {
+                printf("handle macro ERROR START 3");
                 handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after end of macros */
                 return FAILURE;
             }
@@ -357,6 +360,7 @@ status_error_code write_to_file(file_context *src, file_context *dest, char *lin
                 return NO_ERROR;
     }
         else if (strcmp(word, MACRO_START) == 0) {
+            printf("handle macro ERROR START 4");
             handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after macro call */
             free(word);
             return FAILURE;

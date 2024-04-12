@@ -6,10 +6,10 @@
 #include "Error_Handler.h"
 
 #define MAX_MACRO_NAME_LENGTH 32 /* 31 + '\0' */
-#define MACRO_START "mcro"
-#define MACRO_END "endmcro"
-#define SKIP_MCRO 4 /* mcro length */
-#define SKIP_MCR0_END 7 /* endmcro length */
+#define MACRO_START "mcr"
+#define MACRO_END "endmcr"
+#define SKIP_MCRO 3 /* mcr length */
+#define SKIP_MCR0_END 7 /* endmcr length */
 
 
 typedef struct node{
