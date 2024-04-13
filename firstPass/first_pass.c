@@ -156,7 +156,7 @@ int handle_command(int type, char *line)
     boolean is_first = FALSE, is_second = FALSE; /* These booleans will tell which of the operands were
                                                      received (not by source/dest, but by order) */
     int first_method, second_method; /* These will hold the addressing methods of the operands */
-    char first_op[20], second_op[20]; /* These strings will hold the operands */
+    char first_op[MAX_OP_LENGTH], second_op[MAX_OP_LENGTH]; /* These strings will hold the operands */
 
     /* Trying to parse 2 operands */
     line = next_list_token(first_op, line);
@@ -258,19 +258,12 @@ int handle_string_directive(char *line)
     return NO_ERROR;
 }
 
-/* to be REMOVED  
-This function handles analyzing and encoding a .struct directive to data memory,
- * given the char sequence starting from after the ".struct"
-*/
-int handle_struct_directive(char *line)
-{
-    return ERROR;
-}
+
 
 /* This function parses parameters of a data directive and encodes them to memory */
 int handle_data_directive(char *line)
 {
-    char token[20]; /* Holds tokens */
+    char token[MAX_OP_LENGTH]; /* Holds tokens */
 
     /* These booleans mark if there was a number or a comma before current token,
      * so that if there wasn't a number, then a number will be required and
@@ -344,7 +337,9 @@ void write_string_to_data(char *str)
 /* This function tries to find the addressing method of a given operand and returns -1 if it was not found */
 int detect_method(char * operand)
 {
-    char *struct_field; /* When determining if it's a .struct directive, this will hold the part after the dot */
+    char *open_bracket, *close_bracket;
+    char name_of_array_index[LABEL_LENGTH]; /* hold the name of the array*/
+    char wanted_index[MAX_INDEX_LENGTH]; /* the index number of the operand  */
 
     if(end_of_line(operand)) return NOT_FOUND;
 
@@ -363,13 +358,34 @@ int detect_method(char * operand)
     else if (is_label(operand, FALSE)) /* Checking if it's a label when there shouldn't be a colon (:) at the end */
         return METHOD_DIRECT;
 
-    /*----- Struct addressing method check -----*/
-    else if (is_label(strtok(operand, "."), FALSE)) { /* Splitting by dot character */
-        struct_field = strtok(NULL, ""); /* Getting the rest of the string */
-        if (strlen(struct_field) == 1 && (*struct_field == '1' || /* After the dot there should be '1' or '2' */
-                *struct_field == '2'))
+    /*--------TODO---------------*/
+    /*----- index addressing method check -----*/
+    else   { 
+        open_bracket = strchr(operand, '['); /* Find the opening bracket */
+        close_bracket = strchr(operand, ']'); /* Find the closing bracket */
+
+        /* Check if both brackets are found and the closing bracket comes after the opening bracket */
+        if (open_bracket && close_bracket && open_bracket < close_bracket) {
+            /* Extract and check the index name part */
+            strncpy(name_of_array_index, operand, open_bracket - operand);
+            name_of_array_index[open_bracket - operand] = '\0'; /* Null-terminate the label part */
+            if (!is_label(name_of_array_index, FALSE)) {
+                err = COMMAND_INVALID_INDEX;
+                return NOT_FOUND;
+            }
+            
+            /* Extract and check the index number part */
+            strncpy(wanted_index, open_bracket + 1, close_bracket - open_bracket - 1);
+            wanted_index[close_bracket - open_bracket - 1] = '\0'; /* Null-terminate the number part */
+            if (!is_number(wanted_index)) {
+                err = COMMAND_INVALID_INDEX;
+                return NOT_FOUND;
+            }
+            
             return METHOD_INDEX;
+            }
     }
+    /* If none of the above addressing methods matched, set the error and return NOT_FOUND */
     err = COMMAND_INVALID_METHOD;
     return NOT_FOUND;
 }
@@ -415,12 +431,19 @@ boolean command_accept_methods(int type, int first_method, int second_method)
         case CLR:
         case INC:
         case DEC:
-        case JMP:
-        case BNE:
         case RED:
-        case JSR:
             return first_method == METHOD_DIRECT ||
                    first_method == METHOD_INDEX ||
+                   first_method == METHOD_REGISTER;
+
+        /* These opcodes only accept
+         * Source: NONE
+         * Destination: 1, 3
+        */
+        case JMP:
+        case BNE:
+        case JSR:
+            return first_method == METHOD_DIRECT ||
                    first_method == METHOD_REGISTER;
 
         /* These opcodes are always ok because they accept all methods/none of them and
@@ -507,13 +530,17 @@ unsigned int build_first_word(int type, int is_first, int is_second, int first_m
 
     word = insert_are(word, ABSOLUTE); /* Insert A/R/E mode to the word */
 
+    printf("Word before shifting: %04X\n", word);
+    word >>= BITS_UNUSED;
+    printf("Word after shifting: %04X\n", word);
+
     return word;
 }
 
 /* This function returns how many additional words an addressing method requires */
 int num_words(int method)
 {
-    if(method == METHOD_INDEX) /* Struct addressing method requires two additional words */
+    if(method == METHOD_INDEX) /* index addressing method requires two additional words */
         return 2;
     return 1;
 }
