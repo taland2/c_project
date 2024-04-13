@@ -18,7 +18,6 @@ int handle_data_directive(char *line);
 int handle_directive(int type, char *line);
 int handle_extern_directive(char *line);
 int handle_string_directive(char *line);
-int handle_struct_directive(char *line);
 boolean is_label(char *token, int colon);
 int num_words(int method);
 void read_line(char *line);

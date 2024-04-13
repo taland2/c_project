@@ -280,6 +280,9 @@ void write_error(int line_num)
             fprintf(stderr, "operand has invalid addressing method.\n");
 
             break;
+        case COMMAND_INVALID_INDEX:
+            fprintf(stderr,"invalid index or array name");
+            break;
 
         case COMMAND_INVALID_NUMBER_OF_OPERANDS:
             fprintf(stderr, "number of operands does not match command requirements.\n");

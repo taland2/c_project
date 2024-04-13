@@ -16,7 +16,7 @@
 #define LINE_LENGTH 80 /* maximum chars per line */
 #define MINIMUM_LABEL_LENGTH_WITH_COLON 2
 #define MINIMUM_LABEL_LENGTH_WITHOUT_COLON 1
-#define LABEL_LENGTH 30 /* maximum chars per label */
+#define LABEL_LENGTH 31 /* maximum chars per label */
 
 #define MAX_COMMAND_LENGTH 4 /* maximum number of characters in a command */
 #define MIN_COMMAND_LENGTH 3 /* minimum number of characters in a command */
@@ -24,6 +24,7 @@
 #define REGISTER_LENGTH 2 /* a register's name contains 2 characters */
 #define MIN_REGISTER 0 /* r0 is the first register */
 #define MAX_REGISTER 7 /* r7 is the last register */
+#define MAX_OP_LENGTH 20 /* max lbl length*/
 
 #define MAX_EXTENSION_LENGTH 5
 
@@ -36,6 +37,8 @@
 
 #define FIRST_STRUCT_FIELD 1 /* Index of first struct field */
 #define SECOND_STRUCT_FIELD 2 /* Index of second struct field */
+
+#define MAX_INDEX_LENGTH 12 /*max index could be not more than the machine code bits there for 2^12=4096*/
 
 /* Bit-related info */
 #define BITS_IN_WORD 14
@@ -53,12 +56,12 @@
 #define DEST_METHOD_START_POS 2
 #define DEST_METHOD_END_POS 3
 
-#define MACHINE_RAM 2000
+#define MACHINE_RAM 4096
 
 /**************************************** Enums ****************************************/
 
 /* Directives types */
-enum directives {DATA, STRING, STRUCT, ENTRY, EXTERN, UNKNOWN_TYPE}; 
+enum directives {DATA, STRING, ENTRY, EXTERN, UNKNOWN_TYPE}; 
 
 /* Enum of commands ordered by their opcode */
 enum commands {MOV, CMP, ADD, SUB, NOT, CLR, LEA, INC, DEC, JMP, BNE, RED, PRN, JSR, RTS, HLT, UNKNOWN_COMMAND};
@@ -75,7 +78,7 @@ enum errors {
     COMMAND_NOT_FOUND, COMMAND_UNEXPECTED_CHAR, COMMAND_TOO_MANY_OPERANDS,
     COMMAND_INVALID_METHOD, COMMAND_INVALID_NUMBER_OF_OPERANDS, COMMAND_INVALID_OPERANDS_METHODS,
     ENTRY_LABEL_DOES_NOT_EXIST, ENTRY_CANT_BE_EXTERN, COMMAND_LABEL_DOES_NOT_EXIST,
-    CANNOT_OPEN_FILE
+    CANNOT_OPEN_FILE,COMMAND_INVALID_INDEX
 };
 
 /* When we need to specify if label should contain a colon or not */

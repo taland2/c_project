@@ -133,17 +133,13 @@ void write_output_ob(FILE *fp)
  */
 void write_output_entry(FILE *fp)
 {
-    char *base32_address;
-
     labelPtr label = symbols_table;
     /* Go through symbols table and print only symbols that have an entry */
     while(label)
     {
         if(label -> entry)
         {
-            base32_address = convert_to_base_32(label -> address);
-            fprintf(fp, "%s\t%s\n", label -> name, base32_address);
-            free(base32_address);
+            fprintf(fp, "%s\t%d\n", label -> name, label -> address);
         }
         label = label -> next;
     }
@@ -156,15 +152,11 @@ void write_output_entry(FILE *fp)
  */
 void write_output_extern(FILE *fp)
 {
-    char *base32_address;
     extPtr node = ext_list;
-
     /* Going through external circular linked list and pulling out values */
     do
     {
-        base32_address = convert_to_base_32(node -> address);
-        fprintf(fp, "%s\t%s\n", node -> name, base32_address); /* Printing to file */
-        free(base32_address);
+        fprintf(fp, "%s\t%d\n", node -> name, node -> address); /* Printing to file */
         node = node -> next;
     } while(node != ext_list);
     fclose(fp);

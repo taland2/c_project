@@ -114,15 +114,6 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
             if (**macro_body) free(*macro_body);
             *macro_body = NULL;
         }
-        else if (endmcr){
-            COUNT_SPACES(line_offset, endmcr);
-            endmcr += SKIP_MCR0_END + line_offset;
-            if (*endmcr != '\0') {
-                printf("handle macro ERROR START \n");
-                handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after endmacro */
-                report = FAILURE;
-            }
-        }
     }
     else {
         if ((mcr && !endmcr) || (endmcr && (mcr < endmcr))) { /* 'mcr' detected */
@@ -142,10 +133,6 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
                 return ERR_MEM_ALLOC;
             }
 
-            if (word_len >= MAX_MACRO_NAME_LENGTH) {
-                handle_error(ERR_MACRO_TOO_LONG, src);
-                report = FAILURE;
-            }
 
             if (isdigit(*word)) {
                 handle_error(ERR_INVAL_MACRO_NAME, src, word);
@@ -175,7 +162,6 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
             endmcr += line_offset + get_word_length(&endmcr);
             COUNT_SPACES(line_offset, endmcr);
             if (endmcr[line_offset] != '\0') {
-                printf("handle macro ERROR START 2");
                 handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after macro */
                 report = FAILURE;
             }
@@ -351,13 +337,7 @@ status_error_code write_to_file(file_context *src, file_context *dest, char *lin
             line_offset = 0;
             COUNT_SPACES(line_offset, ptr);
             free(word);
-            if (ptr[line_offset] != '\0') {
-                printf("handle macro ERROR START 3");
-                handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after end of macros */
-                return FAILURE;
-            }
-            else
-                return NO_ERROR;
+            return NO_ERROR;
     }
         else if (strcmp(word, MACRO_START) == 0) {
             printf("handle macro ERROR START 4");

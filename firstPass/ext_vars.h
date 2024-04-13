@@ -1,7 +1,6 @@
 #include "structs.h"
 #include "assembler.h"
 
-#define MACHINE_RAM 2000
 
 extern int ic, dc;
 extern int err;

@@ -23,7 +23,7 @@ const char base32[32] = {
 
 const char *commands[] = {
         "mov", "cmp", "add", "sub", "not", "clr", "lea", "inc", "dec", "jmp", "bne",
-        "red", "prn", "jsr", "rts", "HLT"
+        "red", "prn", "jsr", "rts", "hlt"
 };
 
 const char *directives[] = {
