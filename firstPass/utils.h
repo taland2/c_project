@@ -1,3 +1,11 @@
+/*=======================================================================================================
+Project: Maman 14 - Assembler
+Created by:
+Edrehy Tal and Liberman Ron Rafail
+
+Date: 18/04/2024
+========================================================================================================= */
+
 #include "structs.h"
 
 /* Helper functions that are used for parsing tokens and navigating through them */
