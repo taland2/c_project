@@ -6,9 +6,9 @@
 #include "Error_Handler.h"
 
 #define MAX_MACRO_NAME_LENGTH 32 /* 31 + '\0' */
-#define MACRO_START "mcr"
-#define MACRO_END "endmcr"
-#define SKIP_MCRO 3 /* mcr length */
+#define MCR_START "mcr"
+#define ENDMCR "endmcr"
+#define SKIP_MCR 3 /* mcr length */
 #define SKIP_MCR0_END 7 /* endmcr length */
 
 

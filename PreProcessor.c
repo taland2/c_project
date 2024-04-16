@@ -86,8 +86,10 @@ status_error_code assembler_preprocessor(file_context *src, file_context *dest) 
 /**
  * Handles the start of a macro definition in the input line.
  *
- * Checks if the current line contains the start of a macro definition.
+ * This function checks if the current line contains the start of a macro definition.
  * If a macro definition is found, it extracts the macro name and initializes the macro body.
+ * The function ensures that 'mcr' at the beginning or in the middle of a line is correctly recognized
+ * only if it's followed by whitespace, distinguishing it from substrings in other identifiers.
  *
  * @param src           Pointer to the source file_context struct.
  * @param line          The input line to be processed.
@@ -99,87 +101,53 @@ status_error_code assembler_preprocessor(file_context *src, file_context *dest) 
  * @return NO_ERROR if successful, or an appropriate error status_error_code otherwise.
  */
 status_error_code handle_macro_start(file_context *src, char *line, int *found_macro,
-                           char **macro_name, char **macro_body) {
-    char *mcr = NULL, *endmcr = NULL, *word = NULL;
+                                     char **macro_name, char **macro_body) {
+    char *mcr = NULL, *endmcr = NULL;
+    char *prev_char = NULL, *post_char = NULL, *macro_name_start = NULL;
     size_t word_len;
-    int line_offset = 0, inval;
     status_error_code report = NO_ERROR;
 
-    mcr = strstr(line, MACRO_START);
-    endmcr = strstr(line, MACRO_END);
+    /* Search for 'mcr' and 'endmcr' in the current line */
+    mcr = strstr(line, MCR_START);
+    endmcr = strstr(line, ENDMCR);
 
-    if (*found_macro) { /* previously found 'mcr' */
-        if ((mcr && !endmcr) || (endmcr && mcr < endmcr)) { /* 'mcr' detected */
-            handle_error(ERR_MISSING_ENDMACRO, src);
-            if (**macro_body) free(*macro_body);
-            *macro_body = NULL;
-        }
-    }
-    else {
-        if ((mcr && !endmcr) || (endmcr && (mcr < endmcr))) { /* 'mcr' detected */
+    /* Check if 'mcr' starts a new macro definition */
+    if (mcr) {
+        prev_char = (mcr > line) ? (mcr - 1) : NULL;
+        post_char = mcr + strlen(MCR_START);
+
+        /* Ensure 'mcr' is either at the start of the line or follows a whitespace, and is followed by a whitespace */
+        if ((mcr == line || (prev_char && isspace(*prev_char))) && isspace(*post_char)) {
             *found_macro = 1;
-            mcr += SKIP_MCRO;
-            if (!isspace(*mcr)) {
-                *found_macro = 0;
-                return NO_ERROR;
+            mcr += strlen(MCR_START);
+            while (isspace(*mcr)) mcr++;  /* Skip spaces after 'mcr' to reach the macro name */
+
+            /* Extract the macro name, ensuring it does not include new line or space */
+            macro_name_start = mcr;
+            while (*mcr && !isspace(*mcr) && *mcr != '\n') mcr++;
+            word_len = mcr - macro_name_start;
+
+            if (word_len > 0) {
+                *macro_name = (char*) malloc(word_len + 1);
+                if (!*macro_name) return ERR_MEM_ALLOC;  /* Handle memory allocation failure */
+                strncpy(*macro_name, macro_name_start, word_len);
+                (*macro_name)[word_len] = '\0';
+            } else {
+                *found_macro = 0;  /* No valid macro name found, reset the flag */
+                return FAILURE;  /* Failure due to missing macro name */
             }
-            while (*mcr && (*mcr == ' ' || *mcr == '\t')) {
-                mcr++;
-            }
-            word_len = get_word_length(&mcr);
-
-            if (copy_n_string(&word, mcr, word_len) != NO_ERROR) {
-                free(word);
-                return ERR_MEM_ALLOC;
-            }
-
-
-            if (isdigit(*word)) {
-                handle_error(ERR_INVAL_MACRO_NAME, src, word);
-                report = FAILURE;
-            }
-
-            if (is_macro_exists(word)) {
-                    handle_error(ERR_DUP_MACRO, src);
-                    report = FAILURE;
-            }
-
-            if ((inval = is_directive(word + 1)) || (inval = is_directive(word))) {
-                handle_error(ERR_INVAL_MACRO_NAME, src, directives[inval - 1]);
-                report = FAILURE;
-            }
-
-            if ((inval = is_command(word)) && inval != INVALID_COMMAND) {
-                handle_error(ERR_INVAL_MACRO_NAME, src, commands[inval]);
-                report = FAILURE;
-            }
-
-
-            if (word) free(word);
-
-            endmcr = mcr;
-            COUNT_SPACES(line_offset, endmcr);
-            endmcr += line_offset + get_word_length(&endmcr);
-            COUNT_SPACES(line_offset, endmcr);
-            if (endmcr[line_offset] != '\0') {
-                handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after macro */
-                report = FAILURE;
-            }
-
-
-            if (*macro_name) {
-                free(*macro_name);
-                *macro_name = NULL;
-            }
-            if(copy_n_string(macro_name, mcr, word_len) != NO_ERROR) return FAILURE;
-        }
-        else if (endmcr && (isspace(*(endmcr + 1)) )) {
-            handle_error(ERR_MISSING_MACRO, src);
-            return FAILURE; /* 'endmcr' detected, without a matching opening 'mcr.' */
         }
     }
-    return report;
+
+    /* Handle case where 'endmcr' is found but no corresponding 'mcr' */
+    if (endmcr && !*found_macro) {
+        handle_error(ERR_MISSING_MACRO, src);
+        return FAILURE;  /* Return failure due to missing start of macro definition */
+    }
+
+    return report;  /* Return the error code as determined by the function */
 }
+
 
 /**
  * Handles the body of a macro definition in the input line.
@@ -265,7 +233,7 @@ status_error_code handle_macro_end(char *line, int *found_macro,
     char *ptr = NULL;
     status_error_code report = NO_ERROR;
 
-    if (*found_macro && (ptr = strstr(line, MACRO_END)) != NULL) {
+    if (*found_macro && (ptr = strstr(line, ENDMCR)) != NULL) {
         *found_macro = 0;
         ptr += SKIP_MCR0_END;
 
@@ -332,14 +300,14 @@ status_error_code write_to_file(file_context *src, file_context *dest, char *lin
                 found_macro = 1;
                 fprintf(dest->file_ptr, "%s", matched_macro->body);
         }
-        if (strncmp(word, MACRO_END,SKIP_MCRO) == 0) {
+        if (strncmp(word, ENDMCR,SKIP_MCR) == 0) {
             ptr += SKIP_MCR0_END;
             line_offset = 0;
             COUNT_SPACES(line_offset, ptr);
             free(word);
             return NO_ERROR;
     }
-        else if (strcmp(word, MACRO_START) == 0) {
+        else if (strcmp(word, MCR_START) == 0) {
             printf("handle macro ERROR START 4");
             handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after macro call */
             free(word);
