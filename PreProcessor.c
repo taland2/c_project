@@ -117,7 +117,7 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
         post_char = mcr + strlen(MCR_START);
 
         /* Ensure 'mcr' is either at the start of the line or follows a whitespace, and is followed by a whitespace */
-        if ((mcr == line || (prev_char && isspace(*prev_char))) && isspace(*post_char)) {
+        if ((mcr == line || (prev_char && isspace(*prev_char))) && isspace(*post_char) && (strcmp(mcr,ENDMCR) != 0)) {
             *found_macro = 1;
             mcr += strlen(MCR_START);
             while (isspace(*mcr)) mcr++;  /* Skip spaces after 'mcr' to reach the macro name */
@@ -178,7 +178,7 @@ status_error_code handle_macro_body(char *line, int found_macro, char **macro_bo
         line_length = strlen(line);
         COUNT_SPACES(line_offset, line);
 
-        if (strncmp(line + line_offset, "endmcr", SKIP_MCR0_END) == 0)
+        if (strncmp(line + line_offset, "endmcr", SKIP_MCR_END) == 0)
             return NO_ERROR;
 
         new_macro_body = realloc(*macro_body, body_len + line_length - line_offset + 2);
@@ -230,24 +230,30 @@ status_error_code handle_macro_body(char *line, int found_macro, char **macro_bo
  */
 status_error_code handle_macro_end(char *line, int *found_macro,
                         char **macro_name, char **macro_body) {
-    char *ptr = NULL;
+     char *ptr = strstr(line, ENDMCR);
     status_error_code report = NO_ERROR;
 
-    if (*found_macro && (ptr = strstr(line, ENDMCR)) != NULL) {
-        *found_macro = 0;
-        ptr += SKIP_MCR0_END;
+    if (*found_macro && ptr != NULL) {
+        *found_macro = 0;  /* Mark the end of macro processing */
+        ptr += strlen(ENDMCR);
 
-        while (*ptr && isspace(*ptr)) {
-            ptr++;
+        /* Check for any characters after 'endmcr' */
+        while (*ptr && isspace(*ptr)) ptr++;
+        if (*ptr != '\0') {
+            handle_error(ERR_EXTRA_TEXT, NULL);
+            return FAILURE;  /* Fail if there's extra text after 'endmcr' */
         }
 
-        report = add_macro(*macro_name, *macro_body);
-
-        if (*macro_name) free(*macro_name);
-        if (*macro_body) free(*macro_body);
-        *macro_name = NULL;
-        *macro_body = NULL;
+        /* Finalize the macro if not already done */
+        if (*macro_name && *macro_body) {
+            report = add_macro(*macro_name, *macro_body);
+            free(*macro_name);
+            free(*macro_body);
+            *macro_name = NULL;
+            *macro_body = NULL;
         }
+    }
+
     return report;
 }
 
@@ -301,7 +307,7 @@ status_error_code write_to_file(file_context *src, file_context *dest, char *lin
                 fprintf(dest->file_ptr, "%s", matched_macro->body);
         }
         if (strncmp(word, ENDMCR,SKIP_MCR) == 0) {
-            ptr += SKIP_MCR0_END;
+            ptr += SKIP_MCR_END;
             line_offset = 0;
             COUNT_SPACES(line_offset, ptr);
             free(word);

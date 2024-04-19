@@ -9,7 +9,7 @@
 #define MCR_START "mcr"
 #define ENDMCR "endmcr"
 #define SKIP_MCR 3 /* mcr length */
-#define SKIP_MCR0_END 7 /* endmcr length */
+#define SKIP_MCR_END 6 /* endmcr length */
 
 
 typedef struct node{
