@@ -105,13 +105,16 @@ void write_output_ob(FILE *fp)
     unsigned int address = MEMORY_START;
     int i;
     char *param1 = convert_to_base_32(ic), *param2 = convert_to_base_32(dc);
+    
+    printf("ic: %d, dc: %d\n", ic, dc);
 
-    fprintf(fp, "%s\t%s\n\n", param1, param2); /* First line */
+    fprintf(fp, "%s %s\n", ic, dc); /* First line */
     free(param1);
     free(param2);
 
     for (i = 0; i < ic; address++, i++) /* Instructions memory */
     {
+        printf("address: %d, instruction: %d\n", address, instructions[i]);
         param1 = convert_to_base_32(address);
         param2 = convert_to_base_32(instructions[i]);
 
@@ -123,6 +126,7 @@ void write_output_ob(FILE *fp)
 
     for (i = 0; i < dc; address++, i++) /* Data memory */
     {
+        printf("address: %d, data: %d\n", address, data[i]);
         param1 = convert_to_base_32(address);
         param2 = convert_to_base_32(data[i]);
 
@@ -316,7 +320,6 @@ void encode_label(char *label)
 void encode_additional_word(boolean is_dest, int method, char *operand)
 {
     unsigned int word = EMPTY_WORD; /* An empty word */
-    char *temp;
 
     switch (method)
     {
@@ -330,14 +333,11 @@ void encode_additional_word(boolean is_dest, int method, char *operand)
             encode_label(operand);
             break;
 
-        case METHOD_INDEX: /* Before the dot there should be a label, and after it a number */
-            temp = strchr(operand, '.');
-            *temp = '\0';
-            encode_label(operand); /* Label before dot is the first additional word */
-            *temp++ = '.';
-            word = (unsigned int) atoi(temp);
+        case METHOD_INDEX: 
+           encode_label(operand);
+            word = (unsigned int) atoi(operand + 1);
             word = insert_are(word, ABSOLUTE);
-            encode_to_instructions(word); /* The number after the dot is the second */
+            encode_to_instructions(word);
         break;
 
         case METHOD_REGISTER:

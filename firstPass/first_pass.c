@@ -516,7 +516,7 @@ int calculate_command_num_additional_words(int is_first, int is_second, int firs
 /* This function encodes the first word of the command */
 unsigned int build_first_word(int type, int is_first, int is_second, int first_method, int second_method)
 {
-    unsigned int word = 0;
+    unsigned int word = 0; /*hold the first word and initiate the Unused bits*/
 
     /* Inserting the opcode */
     word = type;
@@ -537,10 +537,6 @@ unsigned int build_first_word(int type, int is_first, int is_second, int first_m
         word |= first_method;
 
     word = insert_are(word, ABSOLUTE); /* Insert A/R/E mode to the word */
-
-    printf("Word before shifting: %04X\n", word);
-    word >>= BITS_UNUSED;
-    printf("Word after shifting: %04X\n", word);
 
     return word;
 }

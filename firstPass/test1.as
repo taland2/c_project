@@ -11,14 +11,12 @@ mov r3, LIST[1]
 mov r3, LIST[0] 
 mov #456 , LIST[0]
 LOOP:	jmp W
-mcr  m_mcr
-cmp K,#sz
-bne W
 prn #-5
 prn r4
 mov STR[5],STR[2]
 sub r1,r4 
-m_mcr  
+cmp K,#sz
+bne W
 L1:     inc L3
 .entry  LOOP
 bne LOOP
