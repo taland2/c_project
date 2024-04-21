@@ -17,6 +17,9 @@ Date: 18/04/2024
 #include "ext_vars.h"
 #include "utils.h"
 
+const char base4[4] = {
+        '*','#','%','!'};
+
 /* This function extracts bits, given start and end positions of the bit-sequence (0 is LSB) */
 unsigned int extract_bits(unsigned int word, int start, int end)
 {
