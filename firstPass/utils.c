@@ -30,17 +30,22 @@ unsigned int extract_bits(unsigned int word, int start, int end)
     return result;
 }
 
-/* Converting a word to 2 digits in base 32 (as a string) */
-char *convert_to_base_32(unsigned int num)
+/* Converting a word to 2 digits in base 4 (as a string) */
+char *convert_to_base_4(unsigned int num)
 {
-    char *base32_seq = (char *) malloc(BASE32_SEQUENCE_LENGTH);
+    char *base4_seq = (char *) malloc(base4_SEQUENCE_LENGTH);
 
-    /* To convert from binary to base 32 we can just take the 5 right binary digits and 5 left */
-    base32_seq[0] = base32[extract_bits(num, 5, 9)];
-    base32_seq[1] = base32[extract_bits(num, 0, 4)];
-    base32_seq[2] = '\0';
+    /* To convert from binary to base 4 we simply takes 2 bits for each digit */
+    base4_seq[0] = base4[extract_bits(num, 12, 13)]; /* MSB*/
+    base4_seq[1] = base4[extract_bits(num, 10, 11)];
+    base4_seq[2] = base4[extract_bits(num, 8, 9)];
+    base4_seq[3] = base4[extract_bits(num, 6, 7)];
+    base4_seq[4] = base4[extract_bits(num, 4, 5)];
+    base4_seq[5] = base4[extract_bits(num, 2, 3)];
+    base4_seq[6] = base4[extract_bits(num, 0, 1)];/*LSB*/
+    base4_seq[7] = '\0';
 
-    return base32_seq;
+    return base4_seq;
 }
 
 /* This function checks if a string is a number (all digits) */

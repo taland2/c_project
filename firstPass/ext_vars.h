@@ -15,7 +15,7 @@ extern int err;
 extern boolean was_error;  /*flag to error exists*/
 extern labelPtr symbols_table; /*list of external labels*/
 extern extPtr ext_list;
-extern const char base32[32]; /*Specil 3 bits encripted*/
+extern const char base4[4]; /*Specil 3 bits encripted*/
 extern const char *commands[]; /*list of our Assembly commands*/
 extern const char *directives[]; /*list of our directive sentences*/
 extern boolean entry_exists, extern_exists;/*flags to exists enrty and extern*/

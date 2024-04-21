@@ -24,10 +24,8 @@ labelPtr symbols_table;
 extPtr ext_list;
 boolean entry_exists, extern_exists, was_error;
 
-const char base32[32] = {
-        '!', '@', '#', '$', '%', '^', '&', '*', '<', '>', 'a', 'b', 'c',
-        'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-        'q', 'r', 's', 't', 'u', 'v'};
+const char base4[4] = {
+        '*','#','%','!'};
 
 const char *commands[] = {
         "mov", "cmp", "add", "sub", "not", "clr", "lea", "inc", "dec", "jmp", "bne",

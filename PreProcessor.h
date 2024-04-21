@@ -24,7 +24,7 @@ status_error_code assembler_preprocessor(file_context *src, file_context *dest);
 status_error_code handle_macro_start(file_context *src, char *line, int *found_macro, char **macro_name, char **macro_body);
 status_error_code handle_macro_body(char *line, int found_macro, char **macro_body);
 status_error_code handle_macro_end(char *line, int *found_macro, char **macro_name, char **macro_body);
-status_error_code write_to_file(file_context *src, file_context *dest, char *line, int found_macro, int found_error);
+status_error_code write_to_am_file(file_context *src, file_context *dest, char *line, int found_macro, int found_error);
 status_error_code add_macro(char* name, char* body);
 
 node* is_macro_exists(char* name);

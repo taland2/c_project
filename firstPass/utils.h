@@ -28,7 +28,7 @@ boolean is_register(char *token);
 /* Helper functions that are used for creating files and assigning required extensions to them */
 char *create_file_name(char *original, int type);
 FILE *open_file(char *filename, int type);
-char *convert_to_base_32(unsigned int num);
+char *convert_to_base_4(unsigned int num);
 
 /* Functions of external labels positions' linked list */
 extPtr add_ext(extPtr *hptr, char *name, unsigned int reference);

@@ -104,36 +104,30 @@ void write_output_ob(FILE *fp)
 {
     unsigned int address = MEMORY_START;
     int i;
-    char *param1 = convert_to_base_32(ic), *param2 = convert_to_base_32(dc);
+    char *converted_base_4;
     
     printf("ic: %d, dc: %d\n", ic, dc);
+    fprintf(fp, "%d %d\n", ic, dc); /* First line */
 
-    fprintf(fp, "%s %s\n", ic, dc); /* First line */
-    free(param1);
-    free(param2);
 
     for (i = 0; i < ic; address++, i++) /* Instructions memory */
     {
         printf("address: %d, instruction: %d\n", address, instructions[i]);
-        param1 = convert_to_base_32(address);
-        param2 = convert_to_base_32(instructions[i]);
+        converted_base_4 = convert_to_base_4(instructions[i]);
 
-        fprintf(fp, "%s\t%s\n", param1, param2);
+        fprintf(fp, "%d\t%s\n", address, converted_base_4);
 
-        free(param1);
-        free(param2);
+        free(converted_base_4);
     }
 
     for (i = 0; i < dc; address++, i++) /* Data memory */
     {
         printf("address: %d, data: %d\n", address, data[i]);
-        param1 = convert_to_base_32(address);
-        param2 = convert_to_base_32(data[i]);
+        converted_base_4 = convert_to_base_4(data[i]);
 
-        fprintf(fp, "%s\t%s\n", param1, param2);
+        fprintf(fp, "%d\t%s\n", address, converted_base_4);
 
-        free(param1);
-        free(param2);
+        free(converted_base_4);
     }
 
     fclose(fp);

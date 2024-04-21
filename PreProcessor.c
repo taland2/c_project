@@ -63,7 +63,7 @@ status_error_code assembler_preprocessor(file_context *src, file_context *dest) 
         HANDLE_REPORT;
         report = handle_macro_end(line, &found_macro, &macro_name, &macro_body);
         HANDLE_REPORT;
-        report = write_to_file(src, dest, line, found_macro, found_error);
+        report = write_to_am_file(src, dest, line, found_macro, found_error);
         HANDLE_REPORT;
 
         src->lc++;
@@ -271,7 +271,7 @@ status_error_code handle_macro_end(char *line, int *found_macro,
  * @return              The status_error_code of the writing operation.
  * @return NO_ERROR if successful, or an appropriate error status_error_code otherwise.
  */
-status_error_code write_to_file(file_context *src, file_context *dest, char *line, int found_macro, int found_error) {
+status_error_code write_to_am_file(file_context *src, file_context *dest, char *line, int found_macro, int found_error) {
     int line_offset;
     char *ptr = NULL, *word = NULL;
     node *matched_macro = NULL;

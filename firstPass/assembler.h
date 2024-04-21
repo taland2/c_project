@@ -35,7 +35,7 @@ Date: 18/04/2024
 
 #define MAX_EXTENSION_LENGTH 5
 
-#define BASE32_SEQUENCE_LENGTH 3 /* A base32 sequence of a word consists of 2 digits (and '\0' ending) */
+#define base4_SEQUENCE_LENGTH 8 /* A base4 sequence of a word consists of 2 digits (and '\0' ending) */
 
 
 #define NUM_DIRECTIVES 5 /* number of existing directives*/
