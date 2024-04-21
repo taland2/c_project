@@ -12,24 +12,6 @@ const char *directives[DIRECTIVE_LEN] = {
     "extern"
 };
 
-const char *commands[COMMANDS_LEN] = {
-    "mov",
-    "cmp",
-    "add",
-    "sub",
-    "not",
-    "clr",
-    "lea",
-    "inc",
-    "dec",
-    "jmp",
-    "bne",
-    "red",
-    "prn",
-    "jsr",
-    "rts",
-    "hlt"
-};
 
 /**
  * Creates a file context object, add extension to file name,
@@ -205,36 +187,6 @@ status_error_code copy_n_string(char** target, const char* source, size_t count)
 
     *target = temp;
     return NO_ERROR;
-}
-
-/**
- * Checks if a given string is a valid Directive.
- *
- * @param src The string to check.
- * @return The corresponding Directive index if the string is a valid Directive, otherwise DEFAULT.
- */
-Directive is_directive(const char* src) {
-    int i;
-    if (src)
-        for (i = 0; i < DIRECTIVE_LEN; i++)
-            if (strncmp(src, directives[i], strlen(directives[i])) == 0)
-                return i + 1; /* Corresponding Directive*/
-    return 0;
-}
-
-/**
- * Checks if a given string is a valid Command.
- *
- * @param src The string to check.
- * @return The corresponding Command index if the string is a valid Command, otherwise 0.
- */
-Command is_command(const char* src) {
-    int i;
-    if (src)
-        for (i = 0; i < COMMANDS_LEN; i++)
-            if (strcmp(src, commands[i]) == 0)
-                return i; /* Corresponding Command*/
-    return INVALID_COMMAND;
 }
 
 /**
