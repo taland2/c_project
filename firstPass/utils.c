@@ -212,8 +212,8 @@ void write_error(int line_num)
 
             break;
 
-        case DATA_EXPECTED_NUM:
-            fprintf(stderr, ".data expected a numeric parameter.\n");
+        case DATA_EXPECTED_NUM_OR_CONST:
+            fprintf(stderr, ".data expected a numeric parameter or const\n");
 
             break;
 
@@ -297,7 +297,7 @@ void write_error(int line_num)
 
             break;
         case COMMAND_INVALID_INDEX:
-            fprintf(stderr,"invalid index or array name");
+            fprintf(stderr,"invalid index or array name\n");
             break;
 
         case COMMAND_INVALID_NUMBER_OF_OPERANDS:
@@ -322,7 +322,9 @@ void write_error(int line_num)
 
         case COMMAND_LABEL_DOES_NOT_EXIST:
             fprintf(stderr, "label does not exist.\n");
-
+            break;
+        case METHOD_IMMEDIATE_INPUT_INVALID:
+            fprintf(stderr, "method immediate is not number or predefined const\n");
             break;
 
         case CANNOT_OPEN_FILE:
@@ -337,6 +339,7 @@ void write_error(int line_num)
             break;
         case DEFINE_INVALID_LABEL:
             fprintf(stderr, "Define invalid LABEL.\n");
+            
     }
 }
 

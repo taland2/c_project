@@ -275,11 +275,11 @@ int handle_string_directive(char *line)
 int handle_data_directive(char *line)
 {
     char token[MAX_OP_LENGTH]; /* Holds tokens */
-
+    labelPtr data_const;
     /* These booleans mark if there was a number or a comma before current token,
      * so that if there wasn't a number, then a number will be required and
      * if there was a number but not a comma, a comma will be required */
-    boolean number = FALSE, comma = FALSE;
+    boolean valid_input = FALSE, comma = FALSE;
 
     while(!end_of_line(line))
     {
@@ -287,14 +287,23 @@ int handle_data_directive(char *line)
 
         if(strlen(token) > 0) /* Not an empty token */
         {
-            if (!number) { /* if there wasn't a number before */
-                if (!is_number(token)) { /* then the token must be a number */
-                    err = DATA_EXPECTED_NUM;
-                    return ERROR;
+            if (!valid_input) { /* if there wasn't a number before */
+                if (!is_number(token)) { /* then the token must be a number or a label*/
+                    if(!is_label(token,FALSE)){ /* if that not a label as well*/
+                        err = DATA_EXPECTED_NUM_OR_CONST;
+                        return ERROR;
+                    }
+                    else{ /*if its label extract the label and write to data*/
+                        data_const = get_label(symbols_table,token);
+                        if(data_const!=NULL){
+                            valid_input = TRUE;
+                            comma = FALSE;
+                            write_num_to_data(data_const->address);
+                        }
+                    }
                 }
-
                 else {
-                    number = TRUE; /* A valid number was inputted */
+                    valid_input = TRUE; /* A valid number or const was inputted */
                     comma = FALSE; /* Resetting comma (now it is needed) */
                     write_num_to_data(atoi(token)); /* encoding number to data */
                 }
@@ -314,7 +323,7 @@ int handle_data_directive(char *line)
                 }
                 else {
                     comma = TRUE;
-                    number = FALSE;
+                    valid_input = FALSE;
                 }
             }
 
@@ -351,14 +360,23 @@ int detect_method(char * operand)
     char *open_bracket, *close_bracket;
     char name_of_array_index[LABEL_LENGTH]; /* hold the name of the array*/
     char wanted_index[MAX_INDEX_LENGTH]; /* the index number of the operand  */
+    labelPtr index_label;
 
     if(end_of_line(operand)) return NOT_FOUND;
 
     /*----- Immediate addressing method check -----*/
     if (*operand == '#') { /* First character is '#' */
         operand++;
-        if (is_number(operand))
+        if (is_number(operand)){     
             return METHOD_IMMEDIATE;
+        }
+        if(is_label(operand,FALSE)){
+            index_label = get_label(symbols_table,operand);
+
+            if(strcmp(index_label ->property,MDEFINE)==0){
+                return METHOD_IMMEDIATE;
+            }
+        }
     }
 
     /*----- Register addressing method check -----*/
@@ -379,20 +397,28 @@ int detect_method(char * operand)
             /* Extract and check the index name part */
             strncpy(name_of_array_index, operand, open_bracket - operand);
             name_of_array_index[open_bracket - operand] = '\0'; /* Null-terminate the label part */
-            printf("index addressing name_of_array:%s* \n",name_of_array_index);
             if (!is_label(name_of_array_index, FALSE)) {
                 err = COMMAND_INVALID_INDEX;
                 return NOT_FOUND;
             }
+            else{ /*index label with valid label*/
+                index_label=get_label(symbols_table,name_of_array_index); /*get the label*/
+                if(index_label!=NULL){
+                    if (strcmp(index_label ->property,MDEFINE)==0)
+                    {
+                        return METHOD_INDEX;
+                    }
+                }
+            }
             
+            /*index addressing with numeric*/
             /* Extract and check the index number part */
             strncpy(wanted_index, open_bracket + 1, close_bracket - open_bracket - 1);
             wanted_index[close_bracket - open_bracket - 1] = '\0'; /* Null-terminate the number part */
-            if (!is_number(wanted_index)) {
+            if (!is_number(wanted_index)&& !is_label(wanted_index,FALSE)) { /*if not numer or label inside []*/
                 err = COMMAND_INVALID_INDEX;
                 return NOT_FOUND;
             }
-            
             return METHOD_INDEX;
             }
     }
@@ -621,9 +647,9 @@ int handle_define_directive(char *line){
     }
 
     /* Add the name and value to the symbols table with 'mdefine' property */
-    if(add_label(&symbols_table, name, value, "mdefine",FALSE,FALSE) == NULL)
+    if(add_label(&symbols_table, name, value, MDEFINE,FALSE,FALSE) == NULL)
         return ERROR;
-    printf(".define is add to symbol table name: %s, value: %d \n",name,value);
+    free(rest_of_line);
     free(token);
     return NO_ERROR;
 }

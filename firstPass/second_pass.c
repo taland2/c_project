@@ -314,13 +314,25 @@ void encode_label(char *label)
 void encode_additional_word(boolean is_dest, int method, char *operand)
 {
     unsigned int word = EMPTY_WORD; /* An empty word */
+    labelPtr const_label;
 
     switch (method)
     {
         case METHOD_IMMEDIATE: /* Extracting immediate number */
-            word = (unsigned int) atoi(operand + 1);
-            word = insert_are(word, ABSOLUTE);
-            encode_to_instructions(word);
+            if(is_number(operand+1)){
+                word = (unsigned int) atoi(operand + 1);
+            }
+            else if(is_label(operand + 1, FALSE)){
+                operand = strtok(operand," ");
+                const_label = get_label(symbols_table,operand+1);
+                if(const_label != NULL)
+                    word = (unsigned int) const_label ->address;
+            }
+            else{
+                err = METHOD_IMMEDIATE_INPUT_INVALID;
+            }
+                word = insert_are(word, ABSOLUTE);
+                encode_to_instructions(word);
             break;
 
         case METHOD_DIRECT:
@@ -328,9 +340,9 @@ void encode_additional_word(boolean is_dest, int method, char *operand)
             break;
 
         case METHOD_INDEX: 
-            printf("Method index \n");
-            encode_label(operand);
-            word = (unsigned int) atoi(operand + 1);
+            word = (unsigned int) get_number(operand);
+            encode_label( get_string_name(operand));
+           
             word = insert_are(word, ABSOLUTE);
             encode_to_instructions(word);
         break;
@@ -339,4 +351,29 @@ void encode_additional_word(boolean is_dest, int method, char *operand)
             word = build_register_word(is_dest, operand);
             encode_to_instructions(word);
     }
+}
+
+char* get_string_name(char* formatted_string) {
+   
+    char* name_end = strchr(formatted_string, '[');
+    if (name_end == NULL) {
+        return NULL;
+    }
+    *name_end = '\0';
+    return formatted_string;
+}
+
+int get_number(char* formatted_string) {
+    char* name_end = strchr(formatted_string, '[');
+    if (name_end == NULL) {
+        return -1;
+    }
+    name_end =strtok(name_end+1,"]");
+    if(is_number(name_end))
+        return atoi(name_end);
+    if(is_label(name_end,FALSE)){
+        return get_label_address(symbols_table,name_end);
+    }
+        
+    return -1;
 }

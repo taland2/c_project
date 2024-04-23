@@ -24,7 +24,7 @@ typedef struct structLabels {
 	boolean external; /* a boolean type variable to store if the label is extern or not */
 	boolean inActionStatement; /* a boolean type varialbe to store if the label is in an action statement or not */
 	boolean entry; /* a boolean type varialbe to store if the label is entry or not */
-	char property[MAX_Property_length]; /*store the property "code"/data/mdfine*/
+	char property[MAX_Property_length]; /*store the property "code"/data/mdefine*/
 	labelPtr next; /* a pointer to the next label in the list */
 } Labels;
 

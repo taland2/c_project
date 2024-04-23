@@ -54,5 +54,7 @@ void write_output_entry(FILE *fp);/*This function printing the names and address
 void write_output_extern(FILE *fp);/*This function printing the name and address of each symbol to a file, separated by a tab character, and then closes the file.*/
 int write_output_files(char *original);/*This function is responsible for generating output files for the assembly program. It first opens the original file to write the object code and writes the object code to it. Then, if there are entry symbols, it opens the original file to write the entry file and writes the entry symbols to it. Similarly, if there are external symbols, it opens the original file to write the extern file and writes the external symbols to it.*/
 void write_output_ob(FILE *fp);/*This function writes the output object file (.ob) containing the machine code and data of the assembled program. It first writes the total number of instruction and data words in the program. Then, it iterates through the instructions and data arrays, converting each address and word into base 32 representation and writing them to the file. Finally, it closes the file.*/
+int get_number(char* formatted_string);
+char* get_string_name(char* formatted_string);
 
 #endif
