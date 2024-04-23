@@ -26,3 +26,4 @@ K: .data -5
 	inc r7
 	red W
 	; avsdv
+.define sz=2

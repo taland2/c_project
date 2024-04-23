@@ -32,6 +32,8 @@ Date: 18/04/2024
 #define MIN_REGISTER 0 /* r0 is the first CPU register */
 #define MAX_REGISTER 7 /* r7 is the last CPU register */
 #define MAX_OP_LENGTH 20 /* minimum label length*/
+#define MAX_Property_length 7 /*the length of mdfide*/
+
 
 #define MAX_EXTENSION_LENGTH 5
 
@@ -67,7 +69,7 @@ Date: 18/04/2024
 /**************************************** Enums ****************************************/
 
 /* Directives types */
-enum directives {DATA, STRING, ENTRY, EXTERN, UNKNOWN_TYPE}; 
+enum directives {DATA, STRING, ENTRY, EXTERN, DEFINE ,UNKNOWN_TYPE}; 
 
 /* Enum of commands ordered by their opcode */
 enum commands {MOV, CMP, ADD, SUB, NOT, CLR, LEA, INC, DEC, JMP, BNE, RED, PRN, JSR, RTS, HLT, UNKNOWN_COMMAND};
@@ -84,7 +86,7 @@ enum errors {
     COMMAND_NOT_FOUND, COMMAND_UNEXPECTED_CHAR, COMMAND_TOO_MANY_OPERANDS,
     COMMAND_INVALID_METHOD, COMMAND_INVALID_NUMBER_OF_OPERANDS, COMMAND_INVALID_OPERANDS_METHODS,
     ENTRY_LABEL_DOES_NOT_EXIST, ENTRY_CANT_BE_EXTERN, COMMAND_LABEL_DOES_NOT_EXIST,
-    CANNOT_OPEN_FILE,COMMAND_INVALID_INDEX
+    CANNOT_OPEN_FILE,COMMAND_INVALID_INDEX,DEFINE_MISSING_EQUALS,DEFINE_INVALID_VALUE,DEFINE_INVALID_LABEL
 };
 
 /* When we need to specify if label should contain a colon or not */

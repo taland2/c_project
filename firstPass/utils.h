@@ -36,7 +36,7 @@ void free_ext(extPtr *hptr);
 void print_ext(extPtr h);
 
 /* Functions of symbols table */
-labelPtr add_label(labelPtr *hptr, char *name, unsigned int address, boolean external, ...);
+labelPtr add_label(labelPtr *hptr, char *name, unsigned int address, char *property,boolean external, ...);
 int delete_label(labelPtr *hptr, char *name);
 void free_labels(labelPtr *hptr);
 void offset_addresses(labelPtr label, int num, boolean is_data);

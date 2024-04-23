@@ -1,9 +1,9 @@
 .entry LIST
 .extern W
 .define sz=2
-.define qw = 5 
+.define qw=5 
 
-MAIN:	mov r3, LIST[sz]  
+MAIN:	mov r3, LIST[2]  
 mov r0,r7
 mov #+1,   W[3]   
 mov     #-1111, LIST[sz]  
@@ -90,7 +90,7 @@ prn   #1111
 
 lea LOOP , r7
 END:    hlt
-.define  len = 4
+.define  len=4
 STR:	.string "abcdef"
 LIST:	.data 6,-9, len
 LIST1:	.data len,-9, len, sz

@@ -328,7 +328,8 @@ void encode_additional_word(boolean is_dest, int method, char *operand)
             break;
 
         case METHOD_INDEX: 
-           encode_label(operand);
+            printf("Method index \n");
+            encode_label(operand);
             word = (unsigned int) atoi(operand + 1);
             word = insert_are(word, ABSOLUTE);
             encode_to_instructions(word);

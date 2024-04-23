@@ -88,7 +88,7 @@ labelPtr get_label(labelPtr h, char *name)
 }
 
 /* This function adds a new label to the linked list of labels given its info. */
-labelPtr add_label(labelPtr *hptr, char *name, unsigned int address, boolean external, ...)
+labelPtr add_label(labelPtr *hptr, char *name, unsigned int address, char *property,boolean external, ...)
 {	
 	va_list p;
 	
@@ -103,15 +103,19 @@ labelPtr add_label(labelPtr *hptr, char *name, unsigned int address, boolean ext
 	temp=(labelPtr) malloc(sizeof(Labels)); 
 	if(!temp) /*if we couldn't allocate memory to temp then print an error massage and exit the program*/
 	{
-		printf("\nerror, cannot allocate memory\n");
+		printf("\nADD LABEL error, cannot allocate memory\n");
 		exit(ERROR);
 	}
 
 	/* Storing the info of the label in temp */
+    strcpy(temp->property, property);  /* Directly setting property from arguments*/
+    temp->entry = FALSE;
+    temp->next = NULL;
 	strcpy(temp->name, name);
     temp -> entry = FALSE;
 	temp -> address = address;
 	temp -> external = external;
+
 
 	if(!external) /* An external label can't be in an action statement */
 	{

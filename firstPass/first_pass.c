@@ -65,7 +65,7 @@ void read_line(char *line)
     extract_token(current_token, line); /* Assuming that label is separated from other tokens by a whitespace */
     if(is_label(current_token, COLON)) { /* We check if the first token is a label (and it should contain a colon) */
         label = TRUE;
-        label_node = add_label(&symbols_table, current_token, 0, FALSE, FALSE); /* adding label to the global symbols table */
+        label_node = add_label(&symbols_table, current_token, 0,"code",FALSE,FALSE); /* adding label to the global symbols table */
         if(label_node == NULL){
              printf("Error: creating label failed\n");
              return;
@@ -150,6 +150,9 @@ int handle_directive(int type, char *line)
         case EXTERN:
             /* Handle .extern directive */
             return handle_extern_directive(line);
+        case DEFINE:
+            /*Handle .define directive*/
+            return handle_define_directive(line);
     }
     return NO_ERROR;
 }
@@ -366,7 +369,6 @@ int detect_method(char * operand)
     else if (is_label(operand, FALSE)) /* Checking if it's a label when there shouldn't be a colon (:) at the end */
         return METHOD_DIRECT;
 
-    /*--------TODO---------------*/
     /*----- index addressing method check -----*/
     else   { 
         open_bracket = strchr(operand, '['); /* Find the opening bracket */
@@ -377,6 +379,7 @@ int detect_method(char * operand)
             /* Extract and check the index name part */
             strncpy(name_of_array_index, operand, open_bracket - operand);
             name_of_array_index[open_bracket - operand] = '\0'; /* Null-terminate the label part */
+            printf("index addressing name_of_array:%s* \n",name_of_array_index);
             if (!is_label(name_of_array_index, FALSE)) {
                 err = COMMAND_INVALID_INDEX;
                 return NOT_FOUND;
@@ -574,9 +577,55 @@ int handle_extern_directive(char *line)
     }
 
     /* Trying to add the label to the symbols table */
-    if(add_label(&symbols_table, token, EXTERNAL_DEFAULT_ADDRESS, TRUE) == NULL)
+    if(add_label(&symbols_table, token, EXTERNAL_DEFAULT_ADDRESS, "extren",TRUE) == NULL)
         return ERROR;
     return is_error(); /* Error code might be 1 if there was an error in is_label() */
+}
+
+/* This function handles an .define directive*/
+int handle_define_directive(char *line){
+    char name[LABEL_LENGTH];
+    int value;
+    char *token=NULL;
+    char* rest_of_line = line;
+
+    /* the pointer past ".define" */
+    /* Skip any whitespace following the directive keyword */
+    rest_of_line = skip_spaces(rest_of_line);
+
+    /* Extract the name of the constant */
+    token=strtok(rest_of_line,"="); /*now name is equals to the constant name*/
+    if(token != NULL){
+        token = strtok(token," "); /*remove any trailling spaces after the name*/
+        strcpy(name,token);
+        rest_of_line += strlen(token) +1; /* Move past '=' sign*/
+    } 
+    else{
+        err = DEFINE_MISSING_EQUALS;
+        return ERROR;
+    }
+
+ 
+    rest_of_line = skip_spaces(rest_of_line);
+    /* Extract the value */
+    if (sscanf(rest_of_line, "%d", &value) != 1) {
+        err = DEFINE_INVALID_VALUE;
+        return ERROR;
+    }
+
+
+    /* Validate the name as a valid label that does not already exist */
+    if (!is_label(name, NO_COLON)) {
+        err = DEFINE_INVALID_LABEL;
+        return ERROR;
+    }
+
+    /* Add the name and value to the symbols table with 'mdefine' property */
+    if(add_label(&symbols_table, name, value, "mdefine",FALSE,FALSE) == NULL)
+        return ERROR;
+    printf(".define is add to symbol table name: %s, value: %d \n",name,value);
+    free(token);
+    return NO_ERROR;
 }
 
 /* This function checks whether a given token is a label or not (by syntax).

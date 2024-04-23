@@ -24,16 +24,13 @@ labelPtr symbols_table;
 extPtr ext_list;
 boolean entry_exists, extern_exists, was_error;
 
-const char base4[4] = {
-        '*','#','%','!'};
-
 const char *commands[] = {
         "mov", "cmp", "add", "sub", "not", "clr", "lea", "inc", "dec", "jmp", "bne",
         "red", "prn", "jsr", "rts", "hlt"
 };
 
 const char *directives[] = {
-        ".data", ".string", ".entry", ".extern"
+        ".data", ".string", ".entry", ".extern" ,".define"
 };
 
 void reset_global_vars()

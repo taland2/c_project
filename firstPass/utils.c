@@ -327,6 +327,16 @@ void write_error(int line_num)
 
         case CANNOT_OPEN_FILE:
             fprintf(stderr, "there was an error while trying to open the requested file.\n");
+            break;
+
+        case DEFINE_MISSING_EQUALS:
+            fprintf(stderr, "Define missing =.\n");
+            break;
+        case DEFINE_INVALID_VALUE:
+            fprintf(stderr, "Define invalid values.\n");
+            break;
+        case DEFINE_INVALID_LABEL:
+            fprintf(stderr, "Define invalid LABEL.\n");
     }
 }
 
