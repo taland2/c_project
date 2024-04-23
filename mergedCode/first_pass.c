@@ -91,8 +91,10 @@ void read_line(char *line)
                 delete_label(&symbols_table, label_node->name);
                 label = FALSE;
             }
-            else
+            else{
+                printf("dir type:%d current_token:%s\n",dir_type,current_token);
                 label_node -> address = dc; /* Address of data label is dc */
+            }
         }
         line = next_token(line);
         handle_directive(dir_type, line);
@@ -608,37 +610,44 @@ int handle_extern_directive(char *line)
     return is_error(); /* Error code might be 1 if there was an error in is_label() */
 }
 
-/* This function handles an .define directive*/
-int handle_define_directive(char *line){
+int handle_define_directive(char *line) {
     char name[LABEL_LENGTH];
     int value;
-    char *token=NULL;
-    char* rest_of_line = line;
+    char *token = NULL;
+    char *rest_of_line = line;
 
-    /* the pointer past ".define" */
-    /* Skip any whitespace following the directive keyword */
+    /* Skip any whitespace following the ".define" directive keyword */
     rest_of_line = skip_spaces(rest_of_line);
 
     /* Extract the name of the constant */
-    token=strtok(rest_of_line,"="); /*now name is equals to the constant name*/
-    if(token != NULL){
-        token = strtok(token," "); /*remove any trailling spaces after the name*/
-        strcpy(name,token);
-        rest_of_line += strlen(token) +1; /* Move past '=' sign*/
-    } 
-    else{
+    token = strtok(rest_of_line, "="); /* Now token points to the name part before '=' */
+    if (token) {
+        char *temp = token + strlen(token) + 1; /* Move past the end of the token */
+        token = strtok(token, " \t"); /* Remove any trailing spaces from the name */
+        if (token) {
+            strcpy(name, token);
+        } else {
+            err = DEFINE_MISSING_EQUALS;
+            return ERROR;
+        }
+
+        /* Move past spaces and the '=' character in the remaining part of the line */
+        while (temp < rest_of_line + strlen(rest_of_line) && (*temp == ' ' || *temp == '\t')) temp++; /* Skip spaces */
+        if (*temp == '=') temp++; /* Skip the '=' character */
+        while (*temp == ' ' || *temp == '\t') temp++; /* Skip spaces after '=' */
+
+        rest_of_line = temp;
+    } else {
         err = DEFINE_MISSING_EQUALS;
         return ERROR;
     }
 
- 
-    rest_of_line = skip_spaces(rest_of_line);
+
     /* Extract the value */
     if (sscanf(rest_of_line, "%d", &value) != 1) {
         err = DEFINE_INVALID_VALUE;
         return ERROR;
     }
-
 
     /* Validate the name as a valid label that does not already exist */
     if (!is_label(name, NO_COLON)) {
@@ -647,8 +656,10 @@ int handle_define_directive(char *line){
     }
 
     /* Add the name and value to the symbols table with 'mdefine' property */
-    if(add_label(&symbols_table, name, value, MDEFINE,FALSE,FALSE) == NULL)
+    if (add_label(&symbols_table, name, value, MDEFINE, FALSE, FALSE) == NULL) {
         return ERROR;
+    }
+
     return NO_ERROR;
 }
 
