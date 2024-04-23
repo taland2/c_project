@@ -13,7 +13,7 @@ Date: 18/04/2024
 #include <math.h>
 
 /*--------- Headers ---------*/
-#include "ext_vars.h"
+#include "extern_variables.h"
 #include "prototypes.h"
 #include "utils.h"
 

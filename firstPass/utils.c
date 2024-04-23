@@ -14,7 +14,7 @@ Date: 18/04/2024
 
 #include "prototypes.h"
 #include "assembler.h"
-#include "ext_vars.h"
+#include "extern_variables.h"
 #include "utils.h"
 
 const char base4[4] = {

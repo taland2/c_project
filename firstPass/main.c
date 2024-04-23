@@ -10,7 +10,7 @@ Date: 18/04/2024
 #include <stdlib.h>
 #include "structs.h"
 #include "prototypes.h"
-#include "ext_vars.h"
+#include "extern_variables.h"
 #include "utils.h"
 
 /* Global  extern variables */

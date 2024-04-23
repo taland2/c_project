@@ -12,7 +12,7 @@ Date: 18/04/2024
 #include <stdarg.h>
 
 #include "utils.h"
-#include "ext_vars.h"
+#include "extern_variables.h"
 
 /* This function offsets the addresses of a certain group of labels (data/instruction labels)
  * by a given delta (num).
