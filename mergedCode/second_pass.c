@@ -28,7 +28,7 @@ void second_pass(FILE *fp, char *filename)
     {
         err = NO_ERROR;
         if(!ignore(line)) /* Ignore line if it's blank or ; */
-            read_line_second_pass(line); /* Analyze one line at a time */
+            analyze_line_second_pass(line); /* Analyze one line at a time */
         if(is_error()) { /* If there was an error in the current line */
             was_error = TRUE; /* There was at least one error through all the program */
             write_preprocessor_error(line_num);
@@ -44,7 +44,7 @@ void second_pass(FILE *fp, char *filename)
 }
 
 /* This function analyzes and extracts information needed for the second pass from a given line */
-void read_line_second_pass(char *line)
+void analyze_line_second_pass(char *line)
 {
     int dir_type, command_type;
     char current_token[LINE_LENGTH]; /* will hold current token as needed */

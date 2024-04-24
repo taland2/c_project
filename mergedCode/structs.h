@@ -17,8 +17,8 @@ extern unsigned int instructions[]; /* Instructions array of words */
 typedef enum {FALSE, TRUE} boolean; /* Defining a boolean type (it doesn't exist in ANSI C) */
 
 /* Defining linked list of labels and a pointer to that list */
-typedef struct structLabels * labelPtr;
-typedef struct structLabels {
+typedef struct Labels * labelPtr;
+typedef struct Labels {
 	char name[LABEL_LENGTH]; /* the name of the label */
 	unsigned int address; /* the address of the label */
 	boolean external; /* a boolean type variable to store if the label is extern or not */

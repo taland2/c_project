@@ -30,7 +30,7 @@ void first_pass(FILE *fp)
     {
         err = NO_ERROR; /* Reset the error global var before parsing each line */
         if(!ignore(line)) /* Ignore line if it's blank or ; */
-            read_line(line);
+            analyze_line(line);
         if(is_error()) {
             was_error = TRUE; /* There was at least one error through all the program */
             write_preprocessor_error(line_num); /* Output the error */
@@ -45,7 +45,7 @@ void first_pass(FILE *fp)
 }
 
 /* This function will analyze a given line from the file and will extract the information*/
-void read_line(char *line)
+void analyze_line(char *line)
 {
     /* Initializing variables for the type of the directive/command */
     int dir_type = UNKNOWN_TYPE;
@@ -92,7 +92,6 @@ void read_line(char *line)
                 label = FALSE;
             }
             else{
-                printf("dir type:%d current_token:%s\n",dir_type,current_token);
                 label_node -> address = dc; /* Address of data label is dc */
             }
         }

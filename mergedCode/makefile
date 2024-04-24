@@ -1,5 +1,5 @@
-assembler: main.o first_pass.o structLabels.o struct_ext.o second_pass.o utils.o PreProcessor.o Error_Handler.o
-	gcc -g -ansi -Wall -pedantic main.o first_pass.o struct_ext.o second_pass.o utils.o structLabels.o PreProcessor.o Error_Handler.o -lm -o assembler
+assembler: main.o first_pass.o Labels.o struct_ext.o second_pass.o utils.o PreProcessor.o Error_Handler.o
+	gcc -g -ansi -Wall -pedantic main.o first_pass.o struct_ext.o second_pass.o utils.o Labels.o PreProcessor.o Error_Handler.o -lm -o assembler
 
 main.o: main.c prototypes.h assembler.h extern_variables.h structs.h utils.h
 	gcc -c -ansi -Wall -pedantic main.c -o main.o
@@ -7,8 +7,8 @@ main.o: main.c prototypes.h assembler.h extern_variables.h structs.h utils.h
 first_pass.o: first_pass.c prototypes.h assembler.h extern_variables.h structs.h utils.h
 	gcc -c -ansi -Wall -pedantic first_pass.c -o first_pass.o
 
-structLabels.o: structLabels.c prototypes.h assembler.h extern_variables.h structs.h utils.h
-	gcc -c -ansi -Wall -pedantic structLabels.c -o structLabels.o
+Labels.o: Labels.c prototypes.h assembler.h extern_variables.h structs.h utils.h
+	gcc -c -ansi -Wall -pedantic Labels.c -o Labels.o
 
 utils.o: utils.c prototypes.h assembler.h extern_variables.h structs.h utils.h
 	gcc -c -ansi -Wall -pedantic utils.c -o utils.o
