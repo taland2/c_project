@@ -33,7 +33,7 @@ void first_pass(FILE *fp)
             read_line(line);
         if(is_error()) {
             was_error = TRUE; /* There was at least one error through all the program */
-            write_error(line_num); /* Output the error */
+            write_preprocessor_error(line_num); /* Output the error */
         }
         line_num++;
     }

@@ -345,7 +345,7 @@ file_context* create_file_context(const char* file_name, char* ext, size_t ext_l
     /* Attempt to open the file with the constructed file name */
     file = fopen(fc->file_name, mode);
     if (file == NULL) {
-        handle_error(ERR_OPEN_FILE, fc);
+        handle_preprocessor_error(ERR_OPEN_FILE, fc);
         *report = ERR_OPEN_FILE;
         free(fc->file_name); /* Free the file name string */
         free(fc->file_name_wout_ext); /* Free the version without extension */
@@ -404,7 +404,7 @@ size_t get_word_length(char **ptr) {
 status_error_code copy_string(char** target, const char* source) {
     char* temp = NULL;
     if (!source) {
-        handle_error(TERMINATE, "copy_string()");
+        handle_preprocessor_error(TERMINATE, "copy_string()");
         return TERMINATE;
     }
 
@@ -414,7 +414,7 @@ status_error_code copy_string(char** target, const char* source) {
 
     temp = malloc(strlen(source) + 1);
     if (!temp) {
-        handle_error(ERR_MEM_ALLOC);
+        handle_preprocessor_error(ERR_MEM_ALLOC);
         return ERR_MEM_ALLOC;
     }
 
@@ -438,13 +438,13 @@ status_error_code copy_string(char** target, const char* source) {
 status_error_code copy_n_string(char** target, const char* source, size_t count) {
     char* temp = NULL;
     if (!source) {
-        handle_error(TERMINATE, "copy_n_string()");
+        handle_preprocessor_error(TERMINATE, "copy_n_string()");
         return TERMINATE;
     }
 
     temp = malloc(count + 1);
     if (!temp) {
-        handle_error(ERR_MEM_ALLOC);
+        handle_preprocessor_error(ERR_MEM_ALLOC);
         return ERR_MEM_ALLOC;
     }
     strncpy(temp, source, count);

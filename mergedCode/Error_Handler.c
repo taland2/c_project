@@ -1,3 +1,11 @@
+/*=======================================================================================================
+Project: Maman 14 - Assembler
+Created by:
+Edrehy Tal and Liberman Ron Rafail
+
+Date: 18/04/2024
+========================================================================================================= */
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -32,7 +40,7 @@ const char *msg[MSG_LEN] = {
  * @param code      The error code indicating the type of error.
  * @param ...       Additional arguments depending on the error code.
  */
-void handle_error(status_error_code code, ...) {
+void handle_preprocessor_error(status_error_code code, ...) {
     va_list args;
     file_context *fc = NULL;
     int num, tot;
@@ -47,7 +55,7 @@ void handle_error(status_error_code code, ...) {
         fprintf(stderr, code == TERMINATE ? "INTERNAL ERROR ->\t" : "TERMINATED ->\t");
         fprintf(stderr, msg[code], fncall);
     }
-    else if (code >= ERR_OPEN_FILE && code <= ERR_MISSING_ENDMACRO) {
+    else if (code >= ERR_OPEN_FILE && code <= ERR_MISSING_ENDMCR) {
         fprintf(stderr, "ERROR ->\t");
         fc = va_arg(args, file_context*);
         fprintf(stderr, msg[code], fc->file_name, fc->lc);
@@ -72,7 +80,7 @@ void handle_error(status_error_code code, ...) {
  * @param code      The progress code indicating the type of progress.
  * @param ...       Additional arguments depending on the progress code.
  */
-void handle_progress(status_error_code code, ...) {
+void handle_preprocessor_progress(status_error_code code, ...) {
     va_list args;
     file_context *fc;
     int num, tot;
@@ -92,7 +100,7 @@ void handle_progress(status_error_code code, ...) {
             printf(msg[code], num, tot, fc->file_name);
         }
         else
-        fprintf(stderr, "INTERNAL ERROR ->\tInvalid function call - handle_progress()");
+        fprintf(stderr, "INTERNAL ERROR ->\tInvalid function call - handle_preprocessor_progress()");
         va_end(args);
     }
     printf("\n");
@@ -101,7 +109,7 @@ void handle_progress(status_error_code code, ...) {
 
 /* This function receives line number as a parameter and prints a detailed error message
    accordingly to the error global variable */
-void write_error(int line_num)
+void write_preprocessor_error(int line_num)
 {
     fprintf(stderr, "ERROR (line %d): ", line_num);
 

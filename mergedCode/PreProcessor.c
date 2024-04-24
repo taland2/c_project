@@ -1,3 +1,11 @@
+/*=======================================================================================================
+Project: Maman 14 - Assembler
+Created by:
+Edrehy Tal and Liberman Ron Rafail
+
+Date: 18/04/2024
+========================================================================================================= */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -55,7 +63,7 @@ status_error_code assembler_preprocessor(file_context *src, file_context *dest) 
         line_len = strlen(line);
         if (line_len > MAX_LINE_LENGTH) {
             found_error = 1;
-            handle_error(ERR_LINE_TOO_LONG, src);
+            handle_preprocessor_error(ERR_LINE_TOO_LONG, src);
         }
         report = handle_macro_start(src, line, &found_macro, &macro_name, &macro_body);
         HANDLE_REPORT;
@@ -141,7 +149,7 @@ status_error_code handle_macro_start(file_context *src, char *line, int *found_m
 
     /* Handle case where 'endmcr' is found but no corresponding 'mcr' */
     if (endmcr && !*found_macro) {
-        handle_error(ERR_MISSING_MACRO, src);
+        handle_preprocessor_error(ERR_MISSING_MCR, src);
         return FAILURE;  /* Return failure due to missing start of macro definition */
     }
 
@@ -183,7 +191,7 @@ status_error_code handle_macro_body(char *line, int found_macro, char **macro_bo
 
         new_macro_body = realloc(*macro_body, body_len + line_length - line_offset + 2);
         if (new_macro_body == NULL) {
-            handle_error(ERR_MEM_ALLOC);
+            handle_preprocessor_error(ERR_MEM_ALLOC);
             return ERR_MEM_ALLOC;
         }
 
@@ -203,7 +211,7 @@ status_error_code handle_macro_body(char *line, int found_macro, char **macro_bo
 
         *macro_body = (char *)malloc(line_length - line_offset + 2);
         if (*macro_body == NULL) {
-            handle_error(ERR_MEM_ALLOC);
+            handle_preprocessor_error(ERR_MEM_ALLOC);
             return ERR_MEM_ALLOC;
         }
 
@@ -240,7 +248,7 @@ status_error_code handle_macro_end(char *line, int *found_macro,
         /* Check for any characters after 'endmcr' */
         while (*ptr && isspace(*ptr)) ptr++;
         if (*ptr != '\0') {
-            handle_error(ERR_EXTRA_TEXT, NULL);
+            handle_preprocessor_error(ERR_EXTRA_TEXT, NULL);
             return FAILURE;  /* Fail if there's extra text after 'endmcr' */
         }
 
@@ -315,7 +323,7 @@ status_error_code write_to_am_file(file_context *src, file_context *dest, char *
     }
         else if (strcmp(word, MCR_START) == 0) {
             printf("handle macro ERROR START 4");
-            handle_error(ERR_EXTRA_TEXT, src); /* Extraneous text after macro call */
+            handle_preprocessor_error(ERR_EXTRA_TEXT, src); /* Extraneous text after macro call */
             free(word);
             return FAILURE;
         }
@@ -347,7 +355,7 @@ status_error_code add_macro(char* name, char* body) {
     node* new_macro = malloc(sizeof(node));
 
     if (!new_macro) {
-        handle_error(ERR_MEM_ALLOC);
+        handle_preprocessor_error(ERR_MEM_ALLOC);
         return ERR_MEM_ALLOC;
     }
 

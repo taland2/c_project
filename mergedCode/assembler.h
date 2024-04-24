@@ -52,7 +52,7 @@ Date: 18/04/2024
 #define BITS_IN_OPCODE 4 /*4 opconde bits*/
 #define BITS_IN_METHOD 2 /*Addressing method; bits number 2-3 in command*/
 #define BITS_IN_ARE 2 /*A.R.E command bits */
-#define BITS_IN_REGISTER 4 /*register bits lenght */
+#define BITS_IN_REGISTER 3 /*register bits lenght */
 #define BITS_IN_ADDRESS 8 /*Adreess bits lenght */
 #define BITS_UNUSED 4 /*Not inused bits; last 4 bits in a command*/
 

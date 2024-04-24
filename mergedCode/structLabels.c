@@ -21,10 +21,10 @@ void offset_addresses(labelPtr label, int num, boolean is_data)
 {
     while(label)
     {
-        /* We don't offset external labels (their address is 0). */
+        /* We don't offset external labels (their address is 0). or define which its address is its value*/
         /* is_data and inActionStatement must have different values in order to meet the same criteria
          * and the XOR operator gives us that */
-        if(!(label -> external) && (is_data ^ (label -> inActionStatement)))
+        if(!(label -> external) && (is_data ^ (label -> inActionStatement)) && (strcmp(label->property,MDEFINE)!=0))
         {
             label -> address += num;
         }

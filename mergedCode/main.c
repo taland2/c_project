@@ -46,14 +46,14 @@ void reset_global_vars()
     was_error = FALSE;
 }
 #define HANDLE_STATUS(file, code) if ((code) == ERR_MEM_ALLOC) { \
-    handle_error(code, (file)); \
+    handle_preprocessor_error(code, (file)); \
     if (file) free_file_context(&(file)); \
     return ERR_MEM_ALLOC; \
     }
 
 #define CHECK_ERROR_CONTINUE(report, file) \
     if ((report) != NO_ERROR) {      \
-    handle_error(ERR_FOUND_ASSEMBLER, (file));\
+    handle_preprocessor_error(ERR_FOUND_ASSEMBLER, (file));\
         continue;                    \
     }
 
@@ -78,7 +78,7 @@ status_error_code preprocess_file(const char* file_name, file_context** dest , i
     src = create_file_context(file_name, ASSEMBLY_EXT, FILE_EXT_LEN, FILE_MODE_READ, &code);
     HANDLE_STATUS(src, code);
 
-    handle_progress(OPEN_FILE, src);
+    handle_preprocessor_progress(OPEN_FILE, src);
 
     *dest = create_file_context(file_name, PREPROCESSOR_EXT, FILE_EXT_LEN, FILE_MODE_WRITE_PLUS, &code);
     HANDLE_STATUS(*dest, code);
@@ -90,11 +90,11 @@ status_error_code preprocess_file(const char* file_name, file_context** dest , i
     if (src) free_file_context(&src);
 
     if (code != NO_ERROR) {
-        handle_error(ERR_PRE, index, file_number, file_name);
+        handle_preprocessor_error(ERR_PRE, index, file_number, file_name);
         free_file_context(dest);
         return FAILURE;
     } else {
-        handle_progress(PRE_FILE_OK, *dest, index, file_number);
+        handle_preprocessor_progress(PRE_FILE_OK, *dest, index, file_number);
         return NO_ERROR;
     }
 }
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]){
     file_context *dest_am = NULL;
     /*PreProcessor part*/
     if (argc == 1) {
-        handle_error(FAILURE);
+        handle_preprocessor_error(FAILURE);
         exit(FAILURE);
     }
     for (i = 1; i < argc; i++) {
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]){
 
             printf("\n\n************* Finished %s assembling process *************\n\n", input_filename);
         }
-        else write_error(CANNOT_OPEN_FILE);
+        else write_preprocessor_error(CANNOT_OPEN_FILE);
         free(input_filename);
     }
 

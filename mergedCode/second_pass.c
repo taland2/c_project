@@ -31,7 +31,7 @@ void second_pass(FILE *fp, char *filename)
             read_line_second_pass(line); /* Analyze one line at a time */
         if(is_error()) { /* If there was an error in the current line */
             was_error = TRUE; /* There was at least one error through all the program */
-            write_error(line_num);
+            write_preprocessor_error(line_num);
         }
         line_num++;
     }
