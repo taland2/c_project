@@ -23,7 +23,7 @@ const char *msg[MSG_LEN] = {
         "Assembler - File opened successfully - %s.",
         "Assembler process for %s.as terminated with errors. No output file(s) have been generated.",
         "%s - Extra text on line %d.",
-        "%s - Macro length exceeds the maximum limit on line %d. Maximum length is 31 characters.",
+        "%s - Line length exceeds the maximum limit on line %d. Maximum length is 80 characters.",
         "%s - Missing opening 'mcr' on line %d.",
         "%s - Missing closing 'endmcr' on line %d.",
         "%s - Invalid macro name (%s) on line %d.",

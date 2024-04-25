@@ -1,0 +1,15 @@
+Assembler - File opened successfully - error3.as.
+#1234
+FLOATLABEL mov r1, r2
+E: .data 5, .string "hello", 6
+F: clr r1 , hlt
+G: mov r2, UNDEFINED
+Preprocessor (1/1) - Output file(s) have been successfully generated - error3.am.
+************* END error3 PreProcessor process *************
+
+************* Started error3.am assembling process *************
+
+
+
+************* Finished error3.am assembling process *************
+

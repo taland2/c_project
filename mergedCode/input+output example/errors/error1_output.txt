@@ -1,0 +1,19 @@
+Assembler - File opened successfully - error1.as.
+DUPLABEL: clr r1
+DUPLABEL: inc r1
+EMPTYLABEL: 
+.extern EXTERNLABEL
+.entry EXTERNLABEL
+.entry ENTRYLABEL
+.extern ENTRYLABEL
+mov r1,
+Preprocessor (1/1) - Output file(s) have been successfully generated - error1.am.
+************* END error1 PreProcessor process *************
+
+************* Started error1.am assembling process *************
+
+Error: creating label failed
+
+
+************* Finished error1.am assembling process *************
+

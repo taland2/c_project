@@ -1,0 +1,12 @@
+DUPLABEL: clr r1
+DUPLABEL: inc r1
+
+EMPTYLABEL: 
+
+.extern EXTERNLABEL
+.entry EXTERNLABEL
+
+.entry ENTRYLABEL
+.extern ENTRYLABEL
+
+mov r1,

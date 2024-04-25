@@ -1,0 +1,15 @@
+Assembler - File opened successfully - error2.as.
+mov  r1, # -5
+STR1: .string "abc$ef"
+STR2: .string "ghi^jk"
+D: add r1, r2, r3
+1INVALIDLABEL: hlt
+Preprocessor (1/1) - Output file(s) have been successfully generated - error2.am.
+************* END error2 PreProcessor process *************
+
+************* Started error2.am assembling process *************
+
+
+
+************* Finished error2.am assembling process *************
+

@@ -1,0 +1,8 @@
+mov  r1, # -5
+
+STR1: .string "abc$ef"
+STR2: .string "ghi^jk"
+
+D: add r1, r2, r3
+
+1INVALIDLABEL: hlt

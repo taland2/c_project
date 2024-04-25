@@ -1,0 +1,10 @@
+J: undefaction r1
+
+K: mov       r1,        r2
+
+L: .data 5.5
+
+M@: clr @r1
+N$: inc @r2
+
+O: mov rX, r10

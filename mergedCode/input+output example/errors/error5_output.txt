@@ -1,0 +1,16 @@
+Assembler - File opened successfully - error5.as.
+J: undefaction r1
+K: mov       r1,        r2
+L: .data 5.5
+M@: clr @r1
+N$: inc @r2
+O: mov rX, r10
+Preprocessor (1/1) - Output file(s) have been successfully generated - error5.am.
+************* END error5 PreProcessor process *************
+
+************* Started error5.am assembling process *************
+
+
+
+************* Finished error5.am assembling process *************
+
